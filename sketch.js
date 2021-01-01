@@ -34,10 +34,9 @@ let glob = {
     speedStep: .001,
     //go: false,
     // major axis
-    particles: true,
+    particles: ['centers','chain','both'],
     com: true,
     spokes: false,
-    chain: false,
     newton: false
 
     //bgColor: [0, 0, 0]
