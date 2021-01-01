@@ -1,9 +1,13 @@
-function in_ell(a,b,[px,py]) {
-    return (px*px)/(a*a)+(py*py)/(b*b)<1;
+function ell_error(a,b,[x,y]) {
+    return (x*x)/(a*a)+(y*y)/(b*b)-1.0;
+}
+
+function in_ell(a,b,p) {
+    return ell_err(a,b,p)<0;
 }
 
 function ell_grad(a,b,[x,y]) {
-    return [-2*x/(a*a),-2*y/(b*b)];
+    return [-2.0*x/(a*a),-2.0*y/(b*b)];
 }
 
 function ell_norm(a, b, p) {
@@ -16,10 +20,6 @@ function get_ellipse_point_rad(a,b,t) {
 
 function get_ellipse_point(a,b,tDeg) {
     return get_ellipse_point_rad(a,b,toRad(tDeg));
-}
-
-function in_ell(a,b,[px,py]) {
-    return (px*px)/(a*a)+(py*py)/(b*b)<1;
 }
 
 function ellInterRayb(a, b, [x, y], [nx, ny]) {

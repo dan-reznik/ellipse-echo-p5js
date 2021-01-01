@@ -52,18 +52,19 @@ function reset_sim(ui, sim) {
 }
 
 function get_refl_vel(a, from, vel, speed) {
-    const inter = ellInterRayb(a, 1, from, vel);
-    const dist = edist(from, inter);
+    const on_ell = negl(ell_error(a,1,from)**2);
+    const inter = on_ell ? from : ellInterRayb(a, 1, from, vel);
+    const dist = on_ell ? 0 : edist(from, inter);
 
     const grad = ell_grad(a, 1, inter);
-    const refl_vel = vnorm(vrefl(vscale(vel, -1), grad));
+    const refl_vel = vnorm(vrefl(vscale(vel, -1.0), grad));
     const new_point = vray(inter, refl_vel, speed - dist);
     return { p: new_point, v: refl_vel };
 }
 
 function update_sim(ui, sim, speed) {
     let new_particles = sim.particles.map((z, i) => vsum(z, vscale(sim.vs[i], speed)));
-    const crossed = new_particles.map(z => !in_ell(ui.a, 1, z));
+    const crossed = new_particles.map(z => !in_ell(ui.a, 1.0, z));
     const new_point_vels = sim.vs.map((v, i) => crossed[i] ? get_refl_vel(ui.a, new_particles[i], v, speed) : { p: new_particles[i], v: v });
     sim.particles = new_point_vels.map(pv => pv.p);
     sim.vs = new_point_vels.map(pv => pv.v);
