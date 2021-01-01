@@ -1,9 +1,8 @@
 let glob = {
     goBtn:null,
+    resetBtn:null,
     go:false,
     bgColor:[0,0,0],
-    P0:[0,0],
-    Qs:null,
     ui: {
         //go: false,
     
@@ -17,6 +16,11 @@ let glob = {
         tDegMin: -360,
         tDegMax: 360,
         tDegStep: 0.1,
+        // vel
+        speed : .02,
+        speedMin: .005,
+        speedMax: .1,
+        speedStep: .001,
       
         // dirs
         drawDirs:false,
@@ -26,6 +30,12 @@ let glob = {
         dirsStep: 1,
       
         //bgColor: [0, 0, 0]
+      },
+      sim: {
+        // sim state should probably split
+        P0:[0,0],
+        Qs:null,
+        particles:null
       }
 };
 
@@ -34,38 +44,38 @@ function windowResized() {
    resizeCanvas(windowWidth,windowHeight);
 }
 
-function goBtnPressed() {
-    if (glob.go) {
-        reset_go_btn(glob.goBtn,"Go",clr_blue);
-        glob.go = false;
-    } else {
-        reset_go_btn(glob.goBtn,"Stop",clr_red);
-        glob.go = true;
-    }
-    console.log("Go Btn pressed!", glob.go);
+function gui_changed() {
+  reset_sim(glob.ui, glob.sim);
+  redraw();
 }
 
 function setup() {
   //[glob.width, glob.height] = get_window_width_height();
   createCanvas(windowWidth,windowHeight);
-  glob.goBtn = create_go_btn(20,20,goBtnPressed);
+  glob.goBtn = create_btn(20,20,"Go",clr_blue,goBtnPressed);
+  glob.resetBtn = create_btn(80,20,"Reset",clr_purple,resetBtnPressed);
 
   let gui = createGui('p5.gui');
+  //gui.onchange = gui_changed;
   gui.addObject(glob.ui);
   gui.setPosition(20, 60);
-
+  //gui.loop = qs.setGlobalChangeHandler(gui_changed);
+  reset_sim(glob.ui, glob.sim);
   // only call draw when then gui is changed
   //noLoop();
 }
 
 function draw() {
-  calc_sim();
   background(glob.bgColor);
   glob.goBtn.draw();
+  glob.resetBtn.draw();
+  if (glob.goBtn.state) 
+     update_sim(glob.ui,glob.sim);
   push();
    translate(windowWidth/2, windowHeight/2);
    scale(0.7*windowHeight/2);
-   draw_scene(glob.ui);
+   draw_sim(glob.ui,glob.sim);
   pop();
+  return(glob.goBtn.state);
 }
 

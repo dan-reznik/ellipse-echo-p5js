@@ -52,9 +52,3 @@ function draw_spokes(P0,Qs,rgb,stroke_w) {
   pop();
 }
 
-function draw_scene(ui) {
-    draw_ellipse(ui.a, 1, clr_white, .01);
-    if (ui.drawDirs) draw_spokes(ui.P0, ui.Qs, clr_gray, .005);
-    ui.Qs.map(q=>draw_point(q, clr_green, .005));
-    draw_point(ui.P0, clr_red, .02);
-}

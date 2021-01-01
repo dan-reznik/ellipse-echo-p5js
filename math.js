@@ -119,9 +119,13 @@ vrot = (u) => [-u[1],u[0]]
 vsum3 = (u, v, w) => [u[0] + v[0] + w[0], u[1] + v[1] + w[1]];
 vmid = (u,v) => [(u[0] + v[0])/2, (u[1] + v[1])/2];
 magn2 = (p) => p[0] * p[0] + p[1] * p[1];
+vdot = (u,v) => u[0]*v[0]+u[1]*v[1];
 magn = (p) => sqrt(magn2(p));
 vinterp = (p1,p2,t) => vsum(p1,vscale(vdiff(p2,p1),t));
 vray = (p,n,t) => vsum(p,vscale(n,t));
+// 2 (v.n) n/magn2[n] - v;
+
+vrefl = (v,n) => vdiff(vscale(n,2*vdot(v,n)/magn2(n)),v);
 
 function circle_inversion(p, {ctr, R}) {
    const dp = vdiff(p, ctr);
@@ -185,9 +189,9 @@ function cos_third(c) {
   return 1/cos_third(c);
  }
 
- function shuffle(array) {
-  return array.sort(() => Math.random() - 0.5);
-}
+ //function shuffle(array) {
+ // return array.sort(() => Math.random() - 0.5);
+//}
 
 function shuffle_seeded(arr,seed) {
    const r_fn = mulberry32(seed);
@@ -279,10 +283,3 @@ function range(start, end) {
     return Array(end - start + 1).fill().map((_, idx) => start + idx)
 }
 
-function get_ellipse_point_rad(a,b,t) {
-    return [a*Math.cos(t),b*Math.sin(t)];
-  }
-
-function get_ellipse_point(a,b,tDeg) {
-    return get_ellipse_point_rad(a,b,toRad(tDeg));
-}
