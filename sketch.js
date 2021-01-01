@@ -11,18 +11,13 @@ let glob = {
         aMin: 1,
         aMax: 4,
         aStep: 0.01,
-        type: ['border','center','focus'],
+        depart: ['border','center','focus','top vtx','bottom vtx','left vtx','right vtx'],
         // tDeg
         tDeg: 30.,
         tDegMin: -360,
         tDegMax: 360,
         tDegStep: 0.1,
-        // vel
-        speed : .02,
-        speedMin: .005,
-        speedMax: .1,
-        speedStep: .001,
-      
+              
         // dirs
        
         dirs: 180,
@@ -33,6 +28,11 @@ let glob = {
         //bgColor: [0, 0, 0]
       },
       ui_dr: {
+        // vel
+        speed : .02,
+        speedMin: .005,
+        speedMax: .1,
+        speedStep: .001,
         //go: false,
         // major axis
         com:true,
@@ -74,9 +74,9 @@ function setup() {
   gui.setPosition(20, 60);
   gui.prototype.setGlobalChangeHandler(gui_changed);
 
-  let gui_dr = createGui('Draw');
+  let gui_dr = createGui('Draw Controls');
   gui_dr.addObject(glob.ui_dr);
-  gui_dr.setPosition(20, 400);
+  gui_dr.setPosition(20, 350);
 
   reset_sim(glob.ui, glob.sim);
   textAlign(CENTER, BOTTOM);
@@ -90,7 +90,7 @@ function draw() {
   glob.goBtn.draw();
   glob.resetBtn.draw();
   if (glob.goBtn.state) 
-     update_sim(glob.ui,glob.sim);
+     update_sim(glob.ui,glob.sim, glob.ui_dr.speed);
   else // should only reset if the control has changed
      ;//reset_sim(glob.ui, glob.sim);
   push();
