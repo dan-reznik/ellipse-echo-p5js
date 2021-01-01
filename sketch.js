@@ -22,7 +22,7 @@ let glob = {
        
         dirs: 180,
         dirsMin: 1,
-        dirsMax: 720,
+        dirsMax: 1800,
         dirsStep: 1,
       
         //bgColor: [0, 0, 0]
@@ -35,6 +35,7 @@ let glob = {
         speedStep: .001,
         //go: false,
         // major axis
+        particles:true,
         com:true,
         spokes:false,
         chain:false

@@ -77,7 +77,7 @@ function draw_sim(ui, sim, ui_dr) {
         draw_spokes(sim.P0, sim.Qs, clr_gray, .005);
         sim.Qs.map(q => draw_point(q, clr_gray, .005));
     }
-    sim.particles.map(z => draw_point(z, clr_tourquoise, .0025));
+    if (ui_dr.particles) sim.particles.map(z => draw_point(z, clr_tourquoise, .0025));
     draw_point(sim.P0, clr_red, .02);
     if (sim.com.length > 1) {
         if (ui_dr.com) draw_polyline(sim.com, clr_green, .005);
