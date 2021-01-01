@@ -24,7 +24,7 @@ let glob = {
       
         // dirs
         drawDirs:false,
-        dirs: 45,
+        dirs: 90,
         dirsMin: 1,
         dirsMax: 720,
         dirsStep: 1,
