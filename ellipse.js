@@ -28,6 +28,27 @@ function ellInterRayb(a, b, [x, y], [nx, ny]) {
     let c1 = 2*(b2*nx*x + a2*ny*y);
     let c0 = b2*x*x + a2*y*y - a2*b2;
     let ss = quadRoots(c2, c1, c0);
-    return ray([x, y], [nx, ny], ss[1]);
+    return vray([x, y], [nx, ny], ss[1]);
  }
+
+ function ell_err_prime(a,b,[px,py],[nx,ny],t) {
+     // d/dt of the ellipse error fn
+     // for a ray from p toward n by t.
+     return 2*(nx*px/(a*a)+ny*py/(b*b));
+ }
+
+function ellInterNewtonIteration(a, b, p0, n, t0) {
+    let f, f_prime, p;
+    let t = t0;
+    let its = 10;
+    while (its-- > 0) {
+        p = vray(p0, n, t);
+        f = ell_error(a, b, p);
+        f_prime = ell_err_prime(a, b, p, n);
+        tstep = f / f_prime;
+        if (negl(tstep)) break;
+        t -= tstep;
+    }
+    return p;
+}
   

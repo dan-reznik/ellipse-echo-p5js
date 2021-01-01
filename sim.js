@@ -6,7 +6,7 @@ function reset_particles(ui, sim) {
     const n0 = ell_norm(ui.a, 1, sim.P0);
     let rad_step = (interior_point ? 2.0 : 1.0) * Math.PI / ui.dirs;
     let Qs, vs;
-    
+
     if (ell_border) {
         const t0 = toRad(ui.tDeg);
         const ts = range(1, ui.dirs - 1).map(d => rad_step * d);
@@ -16,10 +16,14 @@ function reset_particles(ui, sim) {
         const sinStep = Math.sin(rad_step);
         const cosStep = Math.cos(rad_step);
         vs = range(1, ui.dirs).map(r => [0, 0]);
-        const tang0 = interior_point?[1,0]:vperp(n0);
+        const tang0 = interior_point ? [1, 0] : vperp(n0);
         vs[0] = tang0;
         for (let i = 1; i <= ui.dirs; i++)
-            vs[i] = vrot(vs[i - 1], cosStep, sinStep);
+            // renormalize so doesn't lose precision at every rotation
+            // the approach below is fast but introduces a lot of noise!
+            //could use 8th or quarter symmetry
+            //vs[i] = vnorm(vrot(vs[i - 1], cosStep, sinStep));
+            vs[i] = vrot(tang0,Math.cos(rad_step*i),Math.sin(rad_step*i));
         Qs = vs.map(v => vsum(sim.P0, v));
     }
     if (interior_point) {
@@ -33,28 +37,29 @@ function reset_particles(ui, sim) {
     sim.particles = sim.Qs.map(q => sim.P0);
 }
 
-function reset_P0(ui,sim) {
+function reset_P0(ui, sim) {
     const t0 = toRad(ui.tDeg);
-    switch(ui.depart) {
+    switch (ui.depart) {
         case "border": sim.P0 = get_ellipse_point_rad(ui.a, 1, t0); break;
-         case "focus": sim.P0 = [-Math.sqrt(ui.a * ui.a - 1), 0]; break;
+        case "focus": sim.P0 = [-Math.sqrt(ui.a * ui.a - 1), 0]; break;
         case "right vtx": sim.P0 = [ui.a, 0]; break;
-        case "bottom vtx": sim.P0 = [0,1]; break;
-        case "top vtx": sim.P0 = [0,-1]; break;
-        case "left vtx": sim.P0 = [-ui.a,0]; break;
-        default: sim.P0 = [0,0]; // center
+        case "bottom vtx": sim.P0 = [0, 1]; break;
+        case "top vtx": sim.P0 = [0, -1]; break;
+        case "left vtx": sim.P0 = [-ui.a, 0]; break;
+        default: sim.P0 = [0, 0]; // center
     }
 }
 
 function reset_sim(ui, sim) {
-    reset_P0(ui,sim);
+    reset_P0(ui, sim);
     reset_particles(ui, sim);
     sim.com = [sim.P0];
 }
 
-function get_refl_vel(a, from, vel, speed) {
-    const on_ell = negl(ell_error(a,1,from)**2);
-    const inter = on_ell ? from : ellInterRayb(a, 1, from, vel);
+function get_refl_vel(a, from, vel, speed, newton) {
+    const on_ell = negl(ell_error(a, 1, from) ** 2);
+    const inter = on_ell ? from : (newton ? ellInterNewtonIteration(a, 1, from, vel, 0) :
+        ellInterRayb(a, 1, from, vel));
     const dist = on_ell ? 0 : edist(from, inter);
 
     const grad = ell_grad(a, 1, inter);
@@ -63,7 +68,7 @@ function get_refl_vel(a, from, vel, speed) {
     return { p: new_point, v: refl_vel };
 }
 
-function update_sim(ui, sim, speed) {
+function update_sim(ui, sim, speed, newton) {
     let new_particles = sim.particles.map((z, i) => vsum(z, vscale(sim.vs[i], speed)));
     const crossed = new_particles.map(z => !in_ell(ui.a, 1.0, z));
     const new_point_vels = sim.vs.map((v, i) => crossed[i] ? get_refl_vel(ui.a, new_particles[i], v, speed) : { p: new_particles[i], v: v });

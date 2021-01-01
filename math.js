@@ -94,8 +94,6 @@ function quadRoots(a, b, c) {
   }
 }
 
-ray = (p0, phat, d) => [p0[0]+phat[0]*d, p0[1]+phat[1]*d];
-
 function rotSinCos([x, y], st, ct) {
   return [ct * x - st * y, st * x + ct * y];
 }
@@ -119,7 +117,7 @@ vsum3 = (u, v, w) => [u[0] + v[0] + w[0], u[1] + v[1] + w[1]];
 vmid = (u,v) => [(u[0] + v[0])/2, (u[1] + v[1])/2];
 magn2 = (p) => p[0] * p[0] + p[1] * p[1];
 vdot = (u,v) => u[0]*v[0]+u[1]*v[1];
-magn = (p) => sqrt(magn2(p));
+magn = (p) => Math.sqrt(magn2(p));
 vinterp = (p1,p2,t) => vsum(p1,vscale(vdiff(p2,p1),t));
 vray = (p,n,t) => vsum(p,vscale(n,t));
 // 2 (v.n) n/magn2[n] - v;

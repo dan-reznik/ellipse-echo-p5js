@@ -37,7 +37,8 @@ let glob = {
     particles: true,
     com: true,
     spokes: false,
-    chain: false
+    chain: false,
+    newton: false
 
     //bgColor: [0, 0, 0]
   },
@@ -90,7 +91,7 @@ function draw() {
   glob.goBtn.draw();
   glob.resetBtn.draw();
   if (glob.goBtn.state)
-    update_sim(glob.ui, glob.sim, glob.ui_dr.speed);
+    update_sim(glob.ui, glob.sim, glob.ui_dr.speed,glob.ui_dr.newton);
   else // should only reset if the control has changed
     ;//reset_sim(glob.ui, glob.sim);
   push();
