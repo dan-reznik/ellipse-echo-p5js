@@ -55,12 +55,13 @@ function update_sim(ui, sim) {
 }
 
 function draw_sim(ui, sim) {
+    draw_text("© 2021 Dan S. Reznik" , [2.3,1.3], clr_yellow);
     draw_ellipse(ui.a, 1, clr_white, .01);
     if (ui.drawDirs) {
         draw_spokes(sim.P0, sim.Qs, clr_gray, .005);
         sim.Qs.map(q => draw_point(q, clr_gray, .005));
     }
-    sim.particles.map(z => draw_point(z, clr_tourquoise, .005));
+    sim.particles.map(z => draw_point(z, clr_tourquoise, .0025));
     draw_point(sim.P0, clr_red, .02);
     if (sim.com.length>1) {
        draw_polyline(sim.com,clr_green,.005);

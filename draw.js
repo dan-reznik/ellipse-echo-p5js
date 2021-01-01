@@ -1,3 +1,16 @@
+//extSize(32);
+//text('word', 10, 30);
+
+function draw_text(txt, p, rgb) {
+  push();
+  textSize(0.1);
+  strokeWeight(0);
+  fill(rgb);
+  //textAlign(CENTER, BOTTOM);
+  textStyle(NORMAL);
+  text(txt, p[0], p[1] - 0.02);
+  pop();
+}
 
 function draw_point([x, y], rgb, stroke_w) {
   push();

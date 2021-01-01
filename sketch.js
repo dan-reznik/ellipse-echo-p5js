@@ -24,7 +24,7 @@ let glob = {
       
         // dirs
         drawDirs:false,
-        dirs: 90,
+        dirs: 180,
         dirsMin: 1,
         dirsMax: 720,
         dirsStep: 1,
@@ -64,6 +64,8 @@ function setup() {
   gui.setPosition(20, 60);
   gui.prototype.setGlobalChangeHandler(gui_changed);
   reset_sim(glob.ui, glob.sim);
+  textAlign(CENTER, BOTTOM);
+  textStyle(NORMAL);
   // only call draw when then gui is changed
   //loop();
 }
@@ -81,6 +83,7 @@ function draw() {
    scale(0.7*windowHeight/2);
    draw_sim(glob.ui,glob.sim);
   pop();
+
   return(glob.goBtn.state);
 }
 
