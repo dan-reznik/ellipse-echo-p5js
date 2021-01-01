@@ -28,10 +28,9 @@ let glob = {
   },
   ui_dr: {
     // vel
-    speed: .02,
-    speedMin: .001,
-    speedMax: .1,
-    speedStep: .001,
+    speedPwr: [-3,-4,-5,-6],
+    // internal steps
+    internalStepsPwr: [1,2,3,4],
     //go: false,
     // major axis
     particles: ['centers','chain','both'],
@@ -90,7 +89,7 @@ function draw() {
   glob.goBtn.draw();
   glob.resetBtn.draw();
   if (glob.goBtn.state)
-    update_sim(glob.ui, glob.sim, glob.ui_dr.speed,glob.ui_dr.newton);
+    update_sim(glob.ui, glob.sim, glob.ui_dr);
   else // should only reset if the control has changed
     ;//reset_sim(glob.ui, glob.sim);
   push();

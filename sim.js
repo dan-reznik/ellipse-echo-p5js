@@ -68,13 +68,20 @@ function get_refl_vel(a, from, vel, speed, newton) {
     return { p: new_point, v: refl_vel };
 }
 
-function update_sim(ui, sim, speed, newton) {
+function update_sim_once(ui, sim, speed, newton) {
     let new_particles = sim.particles.map((z, i) => vsum(z, vscale(sim.vs[i], speed)));
     const crossed = new_particles.map(z => outside_ell(ui.a, 1.0, z));
-    const new_point_vels = sim.vs.map((v, i) => crossed[i] ? get_refl_vel(ui.a, new_particles[i], v, speed) : { p: new_particles[i], v: v });
+    const new_point_vels = sim.vs.map((v, i) => crossed[i] ? get_refl_vel(ui.a, new_particles[i], v, speed, newton) : { p: new_particles[i], v: v });
     sim.particles = new_point_vels.map(pv => pv.p);
     sim.vs = new_point_vels.map(pv => pv.v);
     sim.com.push(vertex_avg(sim.particles));
+}
+
+function update_sim(ui, sim, ui_dr) {
+    const imax = Math.pow(10,ui_dr.internalStepsPwr);
+    const speed = Math.pow(10,ui_dr.speedPwr);
+    for (let i = 0; i < imax; i++)
+       update_sim_once(ui, sim, speed, ui_dr.newton)
 }
 
 function draw_sim(ui, sim, ui_dr) {
@@ -86,7 +93,7 @@ function draw_sim(ui, sim, ui_dr) {
     }
     if (['centers','both'].includes(ui_dr.particles))
     sim.particles.map(z => draw_point(z, clr_tourquoise, .0025));
-    draw_point(sim.P0, clr_red, .02);
+    draw_point(sim.P0, clr_red, .01);
     if (sim.com.length > 1) {
         if (ui_dr.com) draw_polyline(sim.com, clr_green, .005);
         draw_point(sim.com[sim.com.length - 1], clr_green, .005);
