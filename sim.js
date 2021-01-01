@@ -14,10 +14,10 @@ function reset_particles(ui, sim) {
     } else {
         const sinStep = Math.sin(rad_step);
         const cosStep = Math.cos(rad_step);
-        vs = range(1, ui.dirs - 1).map(r => [0, 0]);
+        vs = range(1, ui.dirs).map(r => [0, 0]);
         const tang0 = interior_point?[1,0]:vperp(n0);
         vs[0] = tang0;
-        for (let i = 1; i <= ui.dirs - 1; i++)
+        for (let i = 1; i <= ui.dirs; i++)
             vs[i] = vrot(vs[i - 1], cosStep, sinStep);
         Qs = vs.map(v => vsum(sim.P0, v));
     }

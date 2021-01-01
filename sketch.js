@@ -1,60 +1,59 @@
 let glob = {
-    goBtn:null,
-    resetBtn:null,
-    go:false,
-    bgColor:[0,0,0],
-    ui: {
-        //go: false,
-    
-        // major axis
-        a: 1.5,
-        aMin: 1,
-        aMax: 4,
-        aStep: 0.01,
-        depart: ['border','center','focus','top vtx','bottom vtx','left vtx','right vtx'],
-        // tDeg
-        tDeg: 30.,
-        tDegMin: -360,
-        tDegMax: 360,
-        tDegStep: 0.1,
-              
-        // dirs
-       
-        dirs: 180,
-        dirsMin: 1,
-        dirsMax: 1800,
-        dirsStep: 1,
-      
-        //bgColor: [0, 0, 0]
-      },
-      ui_dr: {
-        // vel
-        speed : .02,
-        speedMin: .005,
-        speedMax: .1,
-        speedStep: .001,
-        //go: false,
-        // major axis
-        particles:true,
-        com:true,
-        spokes:false,
-        chain:false
-      
-        //bgColor: [0, 0, 0]
-      },
-      sim: {
-        // sim state should probably split
-        P0:[0,0],
-        Qs:null,
-        vs:null,
-        particles:null,
-        com:[]
-      }
+  goBtn: null,
+  resetBtn: null,
+  go: false,
+  bgColor: [0, 0, 0],
+  ui: {
+    //go: false,
+
+    // major axis
+    a: 1.5,
+    aMin: 1,
+    aMax: 4,
+    aStep: 0.01,
+    // dirs
+
+    dirs: 180,
+    dirsMin: 1,
+    dirsMax: 1800,
+    dirsStep: 1,
+    depart: ['border', 'center', 'focus', 'top vtx', 'bottom vtx', 'left vtx', 'right vtx'],
+    // tDeg
+    tDeg: 30.,
+    tDegMin: -360,
+    tDegMax: 360,
+    tDegStep: 0.1,
+
+    //bgColor: [0, 0, 0]
+  },
+  ui_dr: {
+    // vel
+    speed: .02,
+    speedMin: .005,
+    speedMax: .1,
+    speedStep: .001,
+    //go: false,
+    // major axis
+    particles: true,
+    com: true,
+    spokes: false,
+    chain: false
+
+    //bgColor: [0, 0, 0]
+  },
+  sim: {
+    // sim state should probably split
+    P0: [0, 0],
+    Qs: null,
+    vs: null,
+    particles: null,
+    com: []
+  }
 };
 
 function windowResized() {
-   //[glob.width, glob.height] = get_window_width_height();
-   resizeCanvas(windowWidth,windowHeight);
+  //[glob.width, glob.height] = get_window_width_height();
+  resizeCanvas(windowWidth, windowHeight);
 }
 
 function gui_changed() {
@@ -65,9 +64,9 @@ function gui_changed() {
 
 function setup() {
   //[glob.width, glob.height] = get_window_width_height();
-  createCanvas(windowWidth,windowHeight);
-  glob.goBtn = create_btn(20,20,"Go",clr_blue,goBtnPressed);
-  glob.resetBtn = create_btn(80,20,"Reset",clr_purple,resetBtnPressed);
+  createCanvas(windowWidth, windowHeight);
+  glob.goBtn = create_btn(20, 20, "Go", clr_blue, goBtnPressed);
+  glob.resetBtn = create_btn(80, 20, "Reset", clr_purple, resetBtnPressed);
 
   let gui = createGui('Elliptic Echos');
   //gui.onchange = gui_changed;
@@ -90,16 +89,16 @@ function draw() {
   background(glob.bgColor);
   glob.goBtn.draw();
   glob.resetBtn.draw();
-  if (glob.goBtn.state) 
-     update_sim(glob.ui,glob.sim, glob.ui_dr.speed);
+  if (glob.goBtn.state)
+    update_sim(glob.ui, glob.sim, glob.ui_dr.speed);
   else // should only reset if the control has changed
-     ;//reset_sim(glob.ui, glob.sim);
+    ;//reset_sim(glob.ui, glob.sim);
   push();
-   translate(windowWidth/2, windowHeight/2);
-   scale(0.7*windowHeight/2);
-   draw_sim(glob.ui,glob.sim,glob.ui_dr);
+  translate(windowWidth / 2, windowHeight / 2);
+  scale(0.7 * windowHeight / 2);
+  draw_sim(glob.ui, glob.sim, glob.ui_dr);
   pop();
 
-  return(glob.goBtn.state);
+  return (glob.goBtn.state);
 }
 
