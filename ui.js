@@ -23,22 +23,21 @@ function create_btn(x, y, txt, clr, press_fn) {
   return btn;
 }
 
-function reset_btn(btn, txt, clr, state) {
+function set_btn(btn, txt, clr, state) {
   btn.color = clr;
   btn.text = txt;
   btn.state = state;
 }
 
 function resetBtnPressed() {
+  set_btn(glob.goBtn, "Go", clr_blue, false);
   reset_sim(glob.ui, glob.sim);
 }
 
 function goBtnPressed() {
-  if (glob.goBtn.state) {
-    reset_btn(glob.goBtn, "Go", clr_blue, false);
-  }
-  else {
-    reset_btn(glob.goBtn, "Stop", clr_red, true);
-  }
-  console.log("Go Btn pressed!", glob.goBtn);
+  if (glob.goBtn.state)
+    set_btn(glob.goBtn, "Go", clr_blue, false);
+  else
+    set_btn(glob.goBtn, "Stop", clr_red, true);
+  //console.log("Go Btn pressed!", glob.goBtn);
 }

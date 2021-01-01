@@ -47,6 +47,7 @@ function windowResized() {
 }
 
 function gui_changed() {
+  set_btn(glob.goBtn, "Go", clr_blue, false);
   reset_sim(glob.ui, glob.sim);
   redraw();
 }
