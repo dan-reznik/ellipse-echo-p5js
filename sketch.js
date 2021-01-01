@@ -11,6 +11,7 @@ let glob = {
         aMin: 1,
         aMax: 4,
         aStep: 0.01,
+        type: ['border','center','focus'],
         // tDeg
         tDeg: 30.,
         tDegMin: -360,
