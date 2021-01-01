@@ -29,7 +29,7 @@ let glob = {
   ui_dr: {
     // vel
     speed: .02,
-    speedMin: .005,
+    speedMin: .001,
     speedMax: .1,
     speedStep: .001,
     //go: false,
