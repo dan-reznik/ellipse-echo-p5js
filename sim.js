@@ -1,11 +1,12 @@
 function reset_particles(ui, sim) {
     const ell_border = false; // not used: use ellipse border to spread out directions instead of circular arc
+    const interior_point = ['center', 'focus'].includes(ui.depart);
     const minAngle = 5.;
     const sinMinAngle = Math.sin(toRad(minAngle));
     const n0 = ell_norm(ui.a, 1, sim.P0);
-    let rad_step = 2.0 * Math.PI / ui.dirs;
+    let rad_step = (interior_point ? 2.0 : 1.0) * Math.PI / ui.dirs;
     let Qs, vs;
-    const interior_point = ['center', 'focus'].includes(ui.depart);
+    
     if (ell_border) {
         const t0 = toRad(ui.tDeg);
         const ts = range(1, ui.dirs - 1).map(d => rad_step * d);

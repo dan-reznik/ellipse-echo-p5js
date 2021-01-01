@@ -14,7 +14,7 @@ let glob = {
     // dirs
 
     dirs: 180,
-    dirsMin: 10,
+    dirsMin: 2,
     dirsMax: 1800,
     dirsStep: 1,
     depart: ['border', 'center', 'focus', 'top vtx', 'bottom vtx', 'left vtx', 'right vtx'],
