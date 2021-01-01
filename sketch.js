@@ -24,11 +24,20 @@ let glob = {
         speedStep: .001,
       
         // dirs
-        drawDirs:false,
+       
         dirs: 180,
         dirsMin: 1,
         dirsMax: 720,
         dirsStep: 1,
+      
+        //bgColor: [0, 0, 0]
+      },
+      ui_dr: {
+        //go: false,
+        // major axis
+        com:true,
+        spokes:false,
+        chain:false
       
         //bgColor: [0, 0, 0]
       },
@@ -59,11 +68,16 @@ function setup() {
   glob.goBtn = create_btn(20,20,"Go",clr_blue,goBtnPressed);
   glob.resetBtn = create_btn(80,20,"Reset",clr_purple,resetBtnPressed);
 
-  let gui = createGui('p5.gui');
+  let gui = createGui('Elliptic Echos');
   //gui.onchange = gui_changed;
   gui.addObject(glob.ui);
   gui.setPosition(20, 60);
   gui.prototype.setGlobalChangeHandler(gui_changed);
+
+  let gui_dr = createGui('Draw');
+  gui_dr.addObject(glob.ui_dr);
+  gui_dr.setPosition(20, 400);
+
   reset_sim(glob.ui, glob.sim);
   textAlign(CENTER, BOTTOM);
   textStyle(NORMAL);
@@ -82,7 +96,7 @@ function draw() {
   push();
    translate(windowWidth/2, windowHeight/2);
    scale(0.7*windowHeight/2);
-   draw_sim(glob.ui,glob.sim);
+   draw_sim(glob.ui,glob.sim,glob.ui_dr);
   pop();
 
   return(glob.goBtn.state);
