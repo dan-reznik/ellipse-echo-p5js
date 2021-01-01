@@ -70,7 +70,7 @@ function get_refl_vel(a, from, vel, speed, newton) {
 
 function update_sim(ui, sim, speed, newton) {
     let new_particles = sim.particles.map((z, i) => vsum(z, vscale(sim.vs[i], speed)));
-    const crossed = new_particles.map(z => !in_ell(ui.a, 1.0, z));
+    const crossed = new_particles.map(z => outside_ell(ui.a, 1.0, z));
     const new_point_vels = sim.vs.map((v, i) => crossed[i] ? get_refl_vel(ui.a, new_particles[i], v, speed) : { p: new_particles[i], v: v });
     sim.particles = new_point_vels.map(pv => pv.p);
     sim.vs = new_point_vels.map(pv => pv.v);

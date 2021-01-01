@@ -6,6 +6,10 @@ function in_ell(a,b,p) {
     return ell_error(a,b,p)<0;
 }
 
+function outside_ell(a,b,p) {
+    return ell_error(a,b,p)>0;
+}
+
 function ell_grad(a,b,[x,y]) {
     return [-2.0*x/(a*a),-2.0*y/(b*b)];
 }
