@@ -7,13 +7,13 @@ let glob = {
     //go: false,
 
     // major axis
-    a: 1.5,
+    a: 1.618,
     aMin: 1,
     aMax: 4,
-    aStep: 0.01,
+    aStep: 0.001,
     // dirs
 
-    dirs: 180,
+    dirs: 360,
     dirsMin: 2,
     dirsMax: 1800,
     dirsStep: 1,
@@ -30,7 +30,7 @@ let glob = {
     // vel
     speedPwr: [-3,-4,-5,-6],
     // internal steps
-    internalStepsPwr: [1,2,3,4],
+    internalStepsPwr: [0,1,2,3,4],
     //go: false,
     // major axis
     particles: ['centers','chain','both'],
@@ -76,6 +76,9 @@ function setup() {
   let gui_dr = createGui('Draw Controls');
   gui_dr.addObject(glob.ui_dr);
   gui_dr.setPosition(20, 350);
+  // the 2nd argument is an index into the array.
+  gui_dr.prototype.setValue('internalStepsPwr',1);
+  gui_dr.prototype.setValue('particles',1);
 
   reset_sim(glob.ui, glob.sim);
   textAlign(CENTER, BOTTOM);
