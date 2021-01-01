@@ -3,7 +3,7 @@ function ell_error(a,b,[x,y]) {
 }
 
 function in_ell(a,b,p) {
-    return ell_err(a,b,p)<0;
+    return ell_error(a,b,p)<0;
 }
 
 function ell_grad(a,b,[x,y]) {
