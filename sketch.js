@@ -35,7 +35,9 @@ let glob = {
         // sim state should probably split
         P0:[0,0],
         Qs:null,
-        particles:null
+        vs:null,
+        particles:null,
+        com:[]
       }
 };
 
@@ -59,10 +61,10 @@ function setup() {
   //gui.onchange = gui_changed;
   gui.addObject(glob.ui);
   gui.setPosition(20, 60);
-  //gui.loop = qs.setGlobalChangeHandler(gui_changed);
+  gui.prototype.setGlobalChangeHandler(gui_changed);
   reset_sim(glob.ui, glob.sim);
   // only call draw when then gui is changed
-  //noLoop();
+  //loop();
 }
 
 function draw() {
@@ -71,6 +73,8 @@ function draw() {
   glob.resetBtn.draw();
   if (glob.goBtn.state) 
      update_sim(glob.ui,glob.sim);
+  else // should only reset if the control has changed
+     ;//reset_sim(glob.ui, glob.sim);
   push();
    translate(windowWidth/2, windowHeight/2);
    scale(0.7*windowHeight/2);

@@ -115,7 +115,6 @@ vscale_xy = (u, sx, sy) => [u[0]*sx, u[1]*sy];
 vsum = (u, v) => [u[0] + v[0], u[1] + v[1]];
 vrandom = (eps) => vscale([Math.random(),Math.random()],eps); 
 vnoise = (u,eps) => vsum(u,vrandom(eps));
-vrot = (u) => [-u[1],u[0]]
 vsum3 = (u, v, w) => [u[0] + v[0] + w[0], u[1] + v[1] + w[1]];
 vmid = (u,v) => [(u[0] + v[0])/2, (u[1] + v[1])/2];
 magn2 = (p) => p[0] * p[0] + p[1] * p[1];
@@ -126,6 +125,8 @@ vray = (p,n,t) => vsum(p,vscale(n,t));
 // 2 (v.n) n/magn2[n] - v;
 
 vrefl = (v,n) => vdiff(vscale(n,2*vdot(v,n)/magn2(n)),v);
+
+vrot = ([x,y],ct,st) => [ct*x+st*y,-st*x+ct*y];
 
 function circle_inversion(p, {ctr, R}) {
    const dp = vdiff(p, ctr);
@@ -283,3 +284,9 @@ function range(start, end) {
     return Array(end - start + 1).fill().map((_, idx) => start + idx)
 }
 
+function vertex_avg(vs) {
+  let acc=vs[0];
+  for(let i = 1; i < vs.length; i++)
+      acc = vsum(acc,vs[i]);
+  return vscale(acc,1/vs.length);
+}

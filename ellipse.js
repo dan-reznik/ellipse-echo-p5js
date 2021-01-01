@@ -6,8 +6,8 @@ function ell_grad(a,b,[x,y]) {
     return [-2*x/(a*a),-2*y/(b*b)];
 }
 
-function ell_norm(a, [x, y]) {
-    return vnorm([-x, -y * a * a]);
+function ell_norm(a, b, p) {
+    return vnorm(ell_grad(a,b,p));
   }
 
 function get_ellipse_point_rad(a,b,t) {
