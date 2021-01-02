@@ -13,8 +13,8 @@ function reset_particles(ui, sim) {
         Qs = ts.map(t => get_ellipse_point_rad(ui.a, 1, t0 + t));
         vs = Qs.map(q => vnorm(vdiff(q, sim.P0)));
     } else {
-        const sinStep = Math.sin(rad_step);
-        const cosStep = Math.cos(rad_step);
+        //const sinStep = Math.sin(rad_step);
+        //const cosStep = Math.cos(rad_step);
         vs = range(1, ui.dirs).map(r => [0, 0]);
         const tang0 = interior_point ? [1, 0] : vperp(n0);
         vs[0] = tang0;
@@ -23,7 +23,7 @@ function reset_particles(ui, sim) {
             // the approach below is fast but introduces a lot of noise!
             //could use 8th or quarter symmetry
             //vs[i] = vnorm(vrot(vs[i - 1], cosStep, sinStep));
-            vs[i] = vrot(tang0,Math.cos(rad_step*i),Math.sin(rad_step*i));
+            vs[i] = vrot(tang0, Math.cos(rad_step * i), Math.sin(rad_step * i));
         Qs = vs.map(v => vsum(sim.P0, v));
     }
     if (interior_point) {
@@ -50,9 +50,30 @@ function reset_P0(ui, sim) {
     }
 }
 
+function max_index(vals) {
+    let max = vals[0];
+    let imax = 0;
+    for (let i = 1; i < vals.length; i++)
+        if (vals[i] > max) {
+            max = vals[i];
+            imax = i;
+        }
+    return imax;
+}
+
+function reset_caustic(ui, sim) {
+    [sim.app, sim.bpp] = caustic_N3(ui.a, 1);
+    sim.orbit = orbit_N3(ui.a, 1, ui.tDeg);
+    const tangs = ellTangentsb(sim.app, sim.bpp, sim.P0);
+    const tangs_dir = tangs.map(p => vdiff(p, sim.P0));
+    sim.caustic_index_cw = max_index(sim.vs.map(v => vdot(v, tangs_dir[0])));
+    sim.caustic_index_ccw = max_index(sim.vs.map(v => vdot(v, tangs_dir[1])));
+}
+
 function reset_sim(ui, sim) {
     reset_P0(ui, sim);
     reset_particles(ui, sim);
+    reset_caustic(ui, sim);
     sim.com = [sim.P0];
 }
 
@@ -78,25 +99,33 @@ function update_sim_once(ui, sim, speed, newton) {
 }
 
 function update_sim(ui, sim, ui_dr) {
-    const imax = Math.pow(10,ui_dr.internalStepsPwr);
-    const speed = Math.pow(10,ui_dr.speedPwr);
+    const imax = Math.pow(10, ui_dr.internalStepsPwr);
+    const speed = Math.pow(10, ui_dr.speedPwr);
     for (let i = 0; i < imax; i++)
-       update_sim_once(ui, sim, speed, ui_dr.newton)
+        update_sim_once(ui, sim, speed, ui_dr.newton)
 }
 
 function draw_sim(ui, sim, ui_dr) {
     draw_ellipse(ui.a, 1, clr_white, .01);
+    if (ui_dr.caustics == "3") {
+        draw_ellipse_low(sim.app, sim.bpp, clr_light_brown, .01);
+        draw_polygon(sim.orbit, clr_gray, .01);
+    }
     if (ui_dr.spokes) {
         draw_spokes(sim.P0, sim.Qs, clr_gray, .005);
         sim.Qs.map(q => draw_point(q, clr_gray, .005));
     }
-    if (['centers','both'].includes(ui_dr.particles))
-    sim.particles.map(z => draw_point(z, clr_tourquoise, .0025));
+    if (['centers', 'both'].includes(ui_dr.particles))
+        sim.particles.map(z => draw_point(z, clr_tourquoise, .0025));
     draw_point(sim.P0, clr_red, .01);
     if (sim.com.length > 1) {
         if (ui_dr.com) draw_polyline(sim.com, clr_green, .005);
         draw_point(sim.com[sim.com.length - 1], clr_green, .005);
     }
-    if (['chain','both'].includes(ui_dr.particles))
-    draw_polyline(sim.particles, clr_blue, .01);
+    if (['chain', 'both'].includes(ui_dr.particles))
+        draw_polyline(sim.particles, clr_blue, .01);
+    if (ui_dr.caustics!="off") {
+        draw_point(sim.particles[sim.caustic_index_cw], clr_magenta, .005);
+        draw_point(sim.particles[sim.caustic_index_ccw], clr_magenta, .005);
+    }
 }

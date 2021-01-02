@@ -35,6 +35,20 @@ function ellInterRayb(a, b, [x, y], [nx, ny]) {
     return vray([x, y], [nx, ny], ss[1]);
  }
 
+ function ellTangentsb(a, b, [px, py]) {
+    const a2 = a * a, b2 = b * b, px2 = px * px, py2 = py * py;
+    const px3 = px * px2; py3 = py * py2;
+    const denomx = b2 * px2 + a2 * py2;
+    const denomy = b2 * px2 * py + a2 * py3;
+    const radicand = b2 * px2 + a2 * (py2 - b2);
+    const numFact = Math.sqrt(radicand) * py;
+    // 1st tang is CW, 2nd is CCW
+    return [
+      [a2 * (b2 * px + numFact) / denomx, b2 * (a2 * py2 - px * numFact) / denomy],
+      [a2 * (b2 * px - numFact) / denomx, b2 * (a2 * py2 + px * numFact) / denomy]
+    ];
+  }
+
  function ell_err_prime(a,b,[px,py],[nx,ny],t) {
      // d/dt of the ellipse error fn
      // for a ray from p toward n by t.

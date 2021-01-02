@@ -17,9 +17,9 @@ let glob = {
     aStep: 0.001,
     // dirs
 
-    dirs: 360,
+    dirs: 720,
     dirsMin: 2,
-    dirsMax: 1800,
+    dirsMax: 3600,
     dirsStep: 1,
     depart: ['border', 'center', 'focus', 'top vtx', 'bottom vtx', 'left vtx', 'right vtx'],
     // tDeg
@@ -41,7 +41,7 @@ let glob = {
     com: true,
     spokes: false,
     newton: false,
-    caustic: ["3", "3,4", "3,4,5"]
+    caustics: ["off","3", "4", "5"]
 
     //bgColor: [0, 0, 0]
   },
@@ -51,6 +51,9 @@ let glob = {
     Qs: null,
     vs: null,
     particles: null,
+    app:0,bpp:0,orbit:null,
+    caustic_index_cw: -1,
+    caustic_index_ccw: -1,
     com: []
   }
 };
@@ -80,7 +83,7 @@ function setup() {
 
   let gui_dr = createGui('Draw Controls');
   gui_dr.addObject(glob.ui_dr);
-  gui_dr.setPosition(20, 350);
+  gui_dr.setPosition(20, 310);
   // the 2nd argument is an index into the array.
   gui_dr.prototype.setValue('internalStepsPwr', 1);
   gui_dr.prototype.setValue('particles', 1);
@@ -105,7 +108,7 @@ function draw() {
   // translate(glob.ctr[0], glob.ctr[1]);
   // scale(glob.width / (glob.scale*glob.scaleFactor));
   // rotate(dict_rot[glob.ui.rot]); 
-  draw_text("© 2021 Dan S. Reznik", [.84 * windowWidth, .84 * windowHeight], clr_yellow, 20);
+  draw_text("© 2021 Dan S. Reznik", [.92 * windowWidth, .97 * windowHeight], clr_yellow, 20);
   translate(glob.ctr[0], glob.ctr[1]);
   scale(glob.scale * windowHeight / 2);
   draw_sim(glob.ui, glob.sim, glob.ui_dr);

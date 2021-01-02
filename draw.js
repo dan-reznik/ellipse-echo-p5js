@@ -32,6 +32,18 @@ function draw_polyline(vtx, rgb, stroke_w) {
   pop();
 }
 
+function draw_polygon(vtx, rgb, stroke_w) {
+  push();
+  noFill();
+  stroke(rgb);
+  strokeWeight(stroke_w);
+  beginShape();
+  for (let i = 0; i < vtx.length; i++)
+     vertex(...vtx[i]);
+  endShape(CLOSE);
+  pop();
+}
+
 function linedash(p1, p2, dd) {
   let d12 = edist(p1, p2);
   let phat = vnorm(vdiff(p2, p1));
@@ -52,6 +64,15 @@ function draw_line_dashed(p1, p2, rgb, stroke_w) {
   stroke(rgb);
   strokeWeight(stroke_w);
   linedash(p1, p2, 0.025);
+  pop();
+}
+
+function draw_ellipse_low(a, b, rgb, stroke_w) {
+  push();
+  noFill();
+  stroke(rgb);
+  strokeWeight(stroke_w);
+  ellipse(0, 0, 2 * a, 2 * b);
   pop();
 }
 
