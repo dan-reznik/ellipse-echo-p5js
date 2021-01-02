@@ -85,7 +85,6 @@ function update_sim(ui, sim, ui_dr) {
 }
 
 function draw_sim(ui, sim, ui_dr) {
-    draw_text("© 2021 Dan S. Reznik", [2.3, 1.3], clr_yellow);
     draw_ellipse(ui.a, 1, clr_white, .01);
     if (ui_dr.spokes) {
         draw_spokes(sim.P0, sim.Qs, clr_gray, .005);
@@ -99,5 +98,5 @@ function draw_sim(ui, sim, ui_dr) {
         draw_point(sim.com[sim.com.length - 1], clr_green, .005);
     }
     if (['chain','both'].includes(ui_dr.particles))
-    draw_polyline(sim.particles, clr_blue, .005);
+    draw_polyline(sim.particles, clr_blue, .01);
 }

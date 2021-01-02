@@ -1,9 +1,9 @@
 //extSize(32);
 //text('word', 10, 30);
 
-function draw_text(txt, p, rgb) {
+function draw_text(txt, p, rgb, size=1) {
   push();
-  textSize(0.1);
+  textSize(size);
   strokeWeight(0);
   fill(rgb);
   //textAlign(CENTER, BOTTOM);

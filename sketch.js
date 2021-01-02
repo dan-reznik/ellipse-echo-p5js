@@ -3,6 +3,10 @@ let glob = {
   resetBtn: null,
   go: false,
   bgColor: [0, 0, 0],
+  scale: .7,
+  ctr0: [0, 0], ctr: [0, 0],
+  mouse: [0, 0],
+  dragged:false,
   ui: {
     //go: false,
 
@@ -28,15 +32,16 @@ let glob = {
   },
   ui_dr: {
     // vel
-    speedPwr: [-3,-4,-5,-6],
+    speedPwr: [-3, -4, -5, -6],
     // internal steps
-    internalStepsPwr: [0,1,2,3,4],
+    internalStepsPwr: [0, 1, 2, 3, 4],
     //go: false,
     // major axis
-    particles: ['centers','chain','both'],
+    particles: ['centers', 'chain', 'both'],
     com: true,
     spokes: false,
-    newton: false
+    newton: false,
+    caustic: ["3", "3,4", "3,4,5"]
 
     //bgColor: [0, 0, 0]
   },
@@ -77,14 +82,15 @@ function setup() {
   gui_dr.addObject(glob.ui_dr);
   gui_dr.setPosition(20, 350);
   // the 2nd argument is an index into the array.
-  gui_dr.prototype.setValue('internalStepsPwr',1);
-  gui_dr.prototype.setValue('particles',1);
+  gui_dr.prototype.setValue('internalStepsPwr', 1);
+  gui_dr.prototype.setValue('particles', 1);
 
   reset_sim(glob.ui, glob.sim);
   textAlign(CENTER, BOTTOM);
   textStyle(NORMAL);
   // only call draw when then gui is changed
   //loop();
+  glob.ctr = [windowWidth / 2, windowHeight / 2];
 }
 
 function draw() {
@@ -96,11 +102,49 @@ function draw() {
   else // should only reset if the control has changed
     ;//reset_sim(glob.ui, glob.sim);
   push();
-  translate(windowWidth / 2, windowHeight / 2);
-  scale(0.7 * windowHeight / 2);
+  // translate(glob.ctr[0], glob.ctr[1]);
+  // scale(glob.width / (glob.scale*glob.scaleFactor));
+  // rotate(dict_rot[glob.ui.rot]); 
+  draw_text("© 2021 Dan S. Reznik", [.84 * windowWidth, .84 * windowHeight], clr_yellow, 20);
+  translate(glob.ctr[0], glob.ctr[1]);
+  scale(glob.scale * windowHeight / 2);
   draw_sim(glob.ui, glob.sim, glob.ui_dr);
   pop();
 
   return (glob.goBtn.state);
 }
 
+function mouseWheel(event) {
+  if (event.delta < 0)
+    glob.scale *= 1.05;
+  else
+    glob.scale *= 0.95;
+  if (!glob.goBtn.state)
+    redraw();
+  return false;
+}
+
+function mouse_in_ell() {
+  let p = vscale(vdiff(glob.mouse, glob.ctr), 2/(glob.scale*windowHeight));
+  return in_ell(glob.ui.a, 1, p);
+}
+
+function mousePressed() {
+  glob.mouse = [mouseX, mouseY];
+  if (mouse_in_ell()) {
+    glob.dragged = true;
+    glob.ctr0 = JSON.parse(JSON.stringify(glob.ctr));
+  }
+}
+
+function mouseReleased() {
+  //glob.click_ell = false;
+  glob.dragged = false;
+}
+
+function mouseDragged() {
+  if (glob.dragged)
+    glob.ctr = vsum(glob.ctr0, vdiff([mouseX, mouseY], glob.mouse));
+  if (!glob.goBtn.state)
+    redraw();
+}
