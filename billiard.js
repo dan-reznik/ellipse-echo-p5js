@@ -9,6 +9,24 @@ function caustic_N3(a,b) {
     return [ap, bp];
 }
 
+function caustic_N4(a,b) {
+    const a2=a*a,b2=b*b;
+    const denom = Math.sqrt(a2+b2);
+    const ap = a2/denom;
+    const bp = b2/denom;
+    return [ap,bp];
+}
+
+function bounce_caustic(a, b, P0, app, bpp, n) {
+    let tangs, nextP=P0, ps = [JSON.parse(JSON.stringify(P0))];
+    for (let i = 0; i < n-1; i++) {
+        tangs = ellTangentsb(app, bpp, nextP);
+        nextP = ellInterRayb(a, b, nextP, vdiff(tangs[0], nextP));
+        ps.push(nextP);
+    }
+    return(ps);
+}
+
 function cos_alpha(a, x) {
     const a2 = a * a;
     const a4 = a2 * a2;

@@ -17,7 +17,7 @@ let glob = {
     aStep: 0.001,
     // dirs
 
-    dirs: 720,
+    dirs: 1800,
     dirsMin: 2,
     dirsMax: 3600,
     dirsStep: 1,
@@ -38,11 +38,10 @@ let glob = {
     //go: false,
     // major axis
     particles: ['centers', 'chain', 'both'],
-    com: true,
+    comTrail: false,
     spokes: false,
     newton: false,
-    caustics: ["off","3", "4", "5"]
-
+    caustics: true
     //bgColor: [0, 0, 0]
   },
   sim: {
@@ -51,9 +50,7 @@ let glob = {
     Qs: null,
     vs: null,
     particles: null,
-    app:0,bpp:0,orbit:null,
-    caustic_index_cw: -1,
-    caustic_index_ccw: -1,
+    caustic_list:null,
     com: []
   }
 };
@@ -85,7 +82,8 @@ function setup() {
   gui_dr.addObject(glob.ui_dr);
   gui_dr.setPosition(20, 310);
   // the 2nd argument is an index into the array.
-  gui_dr.prototype.setValue('internalStepsPwr', 1);
+  gui_dr.prototype.setValue('speedPwr', 1);
+  gui_dr.prototype.setValue('internalStepsPwr', 2);
   gui_dr.prototype.setValue('particles', 1);
 
   reset_sim(glob.ui, glob.sim);
