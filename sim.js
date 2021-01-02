@@ -62,21 +62,22 @@ function max_index(vals) {
 }
 
 const ell_caustic_dict = {
- 3: caustic_N3,
- 4: caustic_N4
+ 3: {fn:caustic_N3, clr:0},
+ 4: {fn:caustic_N4, clr:1},
+ 6: {fn:caustic_N6, clr:2}
 };
 
 function get_ell_caustic_data(ui, sim, n) {
     let obj = null;
     if (n in ell_caustic_dict) {
-        const [app, bpp] = ell_caustic_dict[n](ui.a, 1);
+        const [app, bpp] = ell_caustic_dict[n].fn(ui.a, 1);
         //sim.orbit = orbit_N3(ui.a, 1, ui.tDeg);
         const orbit = bounce_caustic(ui.a, 1, sim.P0, app, bpp, n);
         const tangs = ellTangentsb(app, bpp, sim.P0);
         const tangs_dir = tangs.map(p => vnorm(vdiff(p, sim.P0)));
         //const index_cw = max_index(sim.vs.map(v => vdot(v, tangs_dir[0])));
         //const index_ccw = max_index(sim.vs.map(v => vdot(v, tangs_dir[1])));
-        obj = { n: n, app: app, bpp: bpp, orbit: orbit, vs: tangs_dir, ps:[sim.P0,sim.P0]/*index_cw: index_cw, index_ccw: index_ccw*/ };
+        obj = { n: n, app: app, bpp: bpp, orbit: orbit, vs: tangs_dir, ps:[sim.P0,sim.P0], clr_index:ell_caustic_dict[n].clr/*index_cw: index_cw, index_ccw: index_ccw*/ };
     }
     return obj;
 }
@@ -84,7 +85,7 @@ function get_ell_caustic_data(ui, sim, n) {
 function reset_sim(ui, sim) {
     reset_P0(ui, sim);
     reset_particles(ui, sim);
-    sim.caustic_list = [3,4].map(n=>get_ell_caustic_data(ui, sim,n));
+    sim.caustic_list = [3,4,6].map(n=>get_ell_caustic_data(ui, sim,n));
     sim.com = [sim.P0];
 }
 
@@ -127,18 +128,25 @@ function update_sim(ui, sim, ui_dr) {
 }
 
 function draw_caustic_shapes(caustic) {
-    draw_ellipse_low(caustic.app, caustic.bpp, clr_light_brown, .01);
-    draw_polygon(caustic.orbit, clr_gray, .01);
+    const clr = glob.clrs[caustic.clr_index];
+    draw_ellipse_low(caustic.app, caustic.bpp, clr_brown, .01);
+    draw_polygon(caustic.orbit, clr, .01);
 }
 
 function draw_caustic_ps(caustic) {
-    caustic.ps.map(p=>draw_point(p, clr_magenta, .005));
+    caustic.ps.map(p=>draw_point(p, glob.clrs[caustic.clr_index], .005));
+}
+
+const dict_caustics = {
+    "3": [0],
+    "3,4": [0,1],
+    "3,4,6": [0,1,2]
 }
 
 function draw_sim(ui, sim, ui_dr) {
     draw_ellipse(ui.a, 1, clr_white, .01);
-    if (ui_dr.caustics)
-        sim.caustic_list.map(draw_caustic_shapes);
+    if (ui_dr.caustics in dict_caustics)
+        dict_caustics[ui_dr.caustics].map(n=>draw_caustic_shapes(sim.caustic_list[n]));
     if (ui_dr.spokes) {
         draw_spokes(sim.P0, sim.Qs, clr_gray, .005);
         sim.Qs.map(q => draw_point(q, clr_gray, .005));
@@ -152,6 +160,6 @@ function draw_sim(ui, sim, ui_dr) {
     }
     if (['chain', 'both'].includes(ui_dr.particles))
         draw_polyline(sim.particles, clr_blue, .01);
-    if (ui_dr.caustics)
-        sim.caustic_list.map(draw_caustic_ps);
+    if (ui_dr.caustics in dict_caustics)
+        dict_caustics[ui_dr.caustics].map(n=>draw_caustic_ps(sim.caustic_list[n]));
 }

@@ -1,12 +1,16 @@
 getDelta2 = (a2,b2) => Math.sqrt(a2*a2-a2*b2+b2*b2);
 
-function caustic_N3(a,b) {
-    const a2 = a*a, b2=b*b;
-    const c2=a2-b2;
-    const d = getDelta2(a2,b2);
-    const ap = a*(d-b2)/c2;
-    const bp = b*(a2-d)/c2;
-    return [ap, bp];
+function caustic_N3(a, b) {
+    const a2 = a * a, b2 = b * b;
+    const c2 = a2 - b2;
+    if (negl(c2))
+        return [a / 2, a / 2];
+    else {
+        const d = getDelta2(a2, b2);
+        const ap = a * (d - b2) / c2;
+        const bp = b * (a2 - d) / c2;
+        return [ap, bp];
+    }
 }
 
 function caustic_N4(a,b) {
@@ -14,6 +18,13 @@ function caustic_N4(a,b) {
     const denom = Math.sqrt(a2+b2);
     const ap = a2/denom;
     const bp = b2/denom;
+    return [ap,bp];
+}
+
+function caustic_N6(a,b) {
+    const denom=a+b;
+    const ap=a*Math.sqrt(a*(a+2*b))/denom;
+    const bp=b*Math.sqrt(b*(2*a+b))/denom;
     return [ap,bp];
 }
 

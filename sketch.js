@@ -1,4 +1,5 @@
 let glob = {
+  clrs: null,
   goBtn: null,
   resetBtn: null,
   go: false,
@@ -6,7 +7,7 @@ let glob = {
   scale: .7,
   ctr0: [0, 0], ctr: [0, 0],
   mouse: [0, 0],
-  dragged:false,
+  dragged: false,
   ui: {
     //go: false,
 
@@ -41,8 +42,11 @@ let glob = {
     comTrail: false,
     spokes: false,
     newton: false,
-    caustics: true
+    caustics: ["off", "3", "3,4", "3,4,6"],
     //bgColor: [0, 0, 0]
+    clrSeed: 1,
+    clrSeedMin: 0,
+    clrSeedMax: 256
   },
   sim: {
     // sim state should probably split
@@ -50,7 +54,7 @@ let glob = {
     Qs: null,
     vs: null,
     particles: null,
-    caustic_list:null,
+    caustic_list: null,
     com: []
   }
 };
@@ -63,6 +67,11 @@ function windowResized() {
 function gui_changed() {
   set_btn(glob.goBtn, "Go", clr_blue, false);
   reset_sim(glob.ui, glob.sim);
+  redraw();
+}
+
+function gui_dr_changed() {
+  glob.clrs = shuffle_seeded(clrs_crayola.map(c => c.rgb), glob.ui_dr.clrSeed);
   redraw();
 }
 
@@ -85,7 +94,10 @@ function setup() {
   gui_dr.prototype.setValue('speedPwr', 1);
   gui_dr.prototype.setValue('internalStepsPwr', 2);
   gui_dr.prototype.setValue('particles', 1);
-
+  gui_dr.prototype.setValue('clrSeed', 54);
+  gui_dr.prototype.setValue('caustics', 2);
+  gui_dr.prototype.setGlobalChangeHandler(gui_dr_changed);
+  glob.clrs = shuffle_seeded(clrs_crayola.map(c => c.rgb), glob.ui_dr.clrSeed);
   reset_sim(glob.ui, glob.sim);
   textAlign(CENTER, BOTTOM);
   textStyle(NORMAL);
@@ -126,7 +138,7 @@ function mouseWheel(event) {
 }
 
 function mouse_in_ell() {
-  let p = vscale(vdiff(glob.mouse, glob.ctr), 2/(glob.scale*windowHeight));
+  let p = vscale(vdiff(glob.mouse, glob.ctr), 2 / (glob.scale * windowHeight));
   return in_ell(glob.ui.a, 1, p);
 }
 
