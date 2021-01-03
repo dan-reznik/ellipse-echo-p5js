@@ -85,11 +85,13 @@ function setup() {
   //gui.onchange = gui_changed;
   gui.addObject(glob.ui);
   gui.setPosition(20, 60);
+  gui.prototype.setWidth(150);
   gui.prototype.setGlobalChangeHandler(gui_changed);
 
   let gui_dr = createGui('Draw Controls');
   gui_dr.addObject(glob.ui_dr);
-  gui_dr.setPosition(20, 310);
+  gui_dr.setPosition(20, 325);
+  gui_dr.prototype.setWidth(150);
   // the 2nd argument is an index into the array.
   gui_dr.prototype.setValue('speedPwr', 1);
   gui_dr.prototype.setValue('internalStepsPwr', 2);
@@ -103,7 +105,7 @@ function setup() {
   textStyle(NORMAL);
   // only call draw when then gui is changed
   //loop();
-  glob.ctr = [windowWidth / 2, windowHeight / 2];
+  glob.ctr = [windowWidth / 2 + (20+150)/2, windowHeight / 2];
 }
 
 function draw() {
