@@ -136,11 +136,12 @@ function setup() {
   //loop();
   glob.ctr = [windowWidth / 2, windowHeight / 2];
   glob.json_url = JsonUrl('lzma'); // JsonUrl is added to the window object
-  const params = getURLParams();
-  if (params.config!=null) {
-    restoreSettings(params.config);
-  }
   reset_sim(glob.ui, glob.sim);
+  // occurs after reset_sim to avoid race condition
+  const params = getURLParams();
+  if (params.config!=null)
+    restoreSettings(params.config);
+  // must execute prior to params.
 }
 
 function keyPressed() {
