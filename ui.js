@@ -45,7 +45,7 @@ function updateClipboard(newClip) {
 function configBtnPressed() {
   const gui_obj = glob.gui.prototype.getValuesAsJSON();
   const gui_dr_obj = glob.gui_dr.prototype.getValuesAsJSON();
-  const both_obj = { gui: gui_obj, gui_dr: gui_dr_obj};
+  const both_obj = { gui: gui_obj, gui_dr: gui_dr_obj, ctr: glob.ctr, scale: glob.scale };
   // async promise
   glob.json_url.compress(both_obj).then(output=>updateClipboard(glob.url+"?config="+output));
 }
@@ -54,6 +54,8 @@ function restoreSettings(str) {
   glob.json_url.decompress(str).then(json => { 
     glob.gui.prototype.setValuesFromJSON(json.gui);
     glob.gui_dr.prototype.setValuesFromJSON(json.gui_dr);
+    glob.ctr = json.ctr;
+    glob.scale = json.scale;
     reset_sim(glob.ui, glob.sim);
     redraw(); })
 }
