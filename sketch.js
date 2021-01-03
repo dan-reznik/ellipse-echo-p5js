@@ -24,13 +24,17 @@ let glob = {
     dirsMin: 2,
     dirsMax: 3600,
     dirsStep: 1,
-    depart: ['border', 'center', 'focus', 'top vtx', 'bottom vtx', 'left vtx', 'right vtx'],
+    depart: ['border', 'center', 'focus', 'top vtx', 'bottom vtx', 'left vtx', 'right vtx', "mid minor","mid major"],
     // tDeg
     tDeg: 30.,
     tDegMin: -360,
     tDegMax: 360,
     tDegStep: 0.1,
-
+    // seed radius
+    initRadius:0,
+    initRadiusMin:0,
+    initRadiusMax:1,
+    initRadiusStep:.01,
     //bgColor: [0, 0, 0]
   },
   ui_dr: {
@@ -48,7 +52,12 @@ let glob = {
     //bgColor: [0, 0, 0]
     clrSeed: 1,
     clrSeedMin: 0,
-    clrSeedMax: 256
+    clrSeedMax: 256,
+    // highlight band
+    hiliteBand:0,
+    hiliteBandMin:0,
+    hiliteBandMax:1,
+    hiliteBandStep:.01
   },
   sim: {
     // sim state should probably split

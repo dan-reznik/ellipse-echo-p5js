@@ -1,6 +1,6 @@
 function reset_particles(ui, sim) {
     const ell_border = false; // not used: use ellipse border to spread out directions instead of circular arc
-    const interior_point = ['center', 'focus'].includes(ui.depart);
+    const interior_point = ['center', 'focus','mid major','mid minor'].includes(ui.depart);
     const minAngle = 5.;
     const sinMinAngle = Math.sin(toRad(minAngle));
     const n0 = ell_norm(ui.a, 1, sim.P0);
@@ -34,7 +34,15 @@ function reset_particles(ui, sim) {
         sim.vs = vs.filter((v, i) => non_whispering[i]);
         sim.Qs = Qs.filter((q, i) => non_whispering[i]);
     }
-    sim.particles = sim.Qs.map(q => sim.P0);
+    if (negl(ui.initRadius))
+        sim.particles = sim.Qs.map((q, i) => sim.P0);
+    else {
+        const newPs = sim.Qs.map((q, i) => vsum(sim.P0, vscale(vs[i], ui.initRadius)));
+        const interior = newPs.map(p=>in_ell(ui.a,1,p));
+        sim.particles = newPs.filter((p,i)=>interior[i]);
+        sim.vs = vs.filter((v,i)=>interior[i]);
+        sim.Qs = Qs.filter((q,i)=>interior[i]);
+    }
 }
 
 function reset_P0(ui, sim) {
@@ -46,6 +54,8 @@ function reset_P0(ui, sim) {
         case "bottom vtx": sim.P0 = [0, 1]; break;
         case "top vtx": sim.P0 = [0, -1]; break;
         case "left vtx": sim.P0 = [-ui.a, 0]; break;
+        case "mid minor": sim.P0 = [0,-.5]; break;
+        case "mid major": sim.P0 = [-.5*ui.a,0]; break;
         default: sim.P0 = [0, 0]; // center
     }
 }
@@ -162,4 +172,6 @@ function draw_sim(ui, sim, ui_dr) {
         draw_polyline(sim.particles, clr_blue, .01);
     if (ui.depart=="border" && ui_dr.caustics in dict_caustics)
         dict_caustics[ui_dr.caustics].map(n=>draw_caustic_ps(sim.caustic_list[n]));
+    if (ui_dr.hiliteBand>0)
+        draw_polyline(sim.particles.slice(0,(sim.particles.length*ui_dr.hiliteBand)-1), clr_cyan,.01);
 }

@@ -21,6 +21,11 @@ function caustic_N4(a,b) {
     return [ap,bp];
 }
 
+// TO DO: caustic N5
+// hyp caustic N4si
+// apollonius points
+
+
 function caustic_N6(a,b) {
     const denom=a+b;
     const ap=a*Math.sqrt(a*(a+2*b))/denom;
