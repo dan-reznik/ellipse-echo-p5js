@@ -120,6 +120,9 @@ function prepare_draw_gui(width) {
 function setup() {
   //[glob.width, glob.height] = get_window_width_height();
   createCanvas(windowWidth, windowHeight);
+  textAlign(CENTER, BOTTOM);
+  textStyle(NORMAL);
+
   glob.goBtn = create_btn(20, 20, "Go", clr_blue, goBtnPressed);
   glob.resetBtn = create_btn(80, 20, "Reset", clr_purple, resetBtnPressed);
   glob.configBtn = create_btn(140,20, "Config", clr_dark_orange, configBtnPressed)
@@ -128,16 +131,16 @@ function setup() {
   glob.gui_dr = prepare_draw_gui(glob.gui_width);
 
   glob.clrs = shuffle_seeded(clrs_crayola.map(c => c.rgb), glob.ui_dr.clrSeed);
-  reset_sim(glob.ui, glob.sim);
-  textAlign(CENTER, BOTTOM);
-  textStyle(NORMAL);
+
   // only call draw when then gui is changed
   //loop();
   glob.ctr = [windowWidth / 2, windowHeight / 2];
   glob.json_url = JsonUrl('lzma'); // JsonUrl is added to the window object
   const params = getURLParams();
-  if (params.config!=null)
+  if (params.config!=null) {
     restoreSettings(params.config);
+  } else
+    reset_sim(glob.ui, glob.sim);
 }
 
 function keyPressed() {

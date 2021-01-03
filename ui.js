@@ -53,7 +53,9 @@ function configBtnPressed() {
 function restoreSettings(str) {
   glob.json_url.decompress(str).then(json => { 
     glob.gui.prototype.setValuesFromJSON(json.gui);
-    glob.gui_dr.prototype.setValuesFromJSON(json.gui_dr); })
+    glob.gui_dr.prototype.setValuesFromJSON(json.gui_dr);
+    reset_sim(glob.ui, glob.sim);
+    redraw(); })
 }
 
 
