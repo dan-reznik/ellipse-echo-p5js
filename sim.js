@@ -145,7 +145,7 @@ const dict_caustics = {
 
 function draw_sim(ui, sim, ui_dr) {
     draw_ellipse(ui.a, 1, clr_white, .01);
-    if (ui_dr.caustics in dict_caustics)
+    if (ui.depart=="border" && ui_dr.caustics in dict_caustics)
         dict_caustics[ui_dr.caustics].map(n=>draw_caustic_shapes(sim.caustic_list[n]));
     if (ui_dr.spokes) {
         draw_spokes(sim.P0, sim.Qs, clr_gray, .005);
@@ -154,12 +154,12 @@ function draw_sim(ui, sim, ui_dr) {
     if (['centers', 'both'].includes(ui_dr.particles))
         sim.particles.map(z => draw_point(z, clr_tourquoise, .0025));
     draw_point(sim.P0, clr_red, .01);
-    if (sim.com.length > 1) {
-        if (ui_dr.comTrail) draw_polyline(sim.com, clr_green, .005);
+    if (sim.com.length > 1 && ui_dr.comTrail) {
+        draw_polyline(sim.com, clr_green, .005);
         draw_point(sim.com[sim.com.length - 1], clr_green, .005);
     }
     if (['chain', 'both'].includes(ui_dr.particles))
         draw_polyline(sim.particles, clr_blue, .01);
-    if (ui_dr.caustics in dict_caustics)
+    if (ui.depart=="border" && ui_dr.caustics in dict_caustics)
         dict_caustics[ui_dr.caustics].map(n=>draw_caustic_ps(sim.caustic_list[n]));
 }
