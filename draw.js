@@ -91,10 +91,14 @@ function draw_ellipse(a, b, rgb, stroke_w) {
 }
 
 function draw_spokes(P0, Qs, rgb, stroke_w) {
+  const max_spokes = 128;
   push();
   stroke(rgb);
   strokeWeight(stroke_w);
-  Qs.map(q => line(...P0, ...q));
+  // TO DO: limit # of drawn spokes to say 200
+  const istep = Qs.length <= max_spokes ? 1 : floor(Qs.length / max_spokes);
+  for (let i = 0; i < Qs.length; i += istep)
+    line(...P0, ...Qs[i]);
   pop();
 }
 

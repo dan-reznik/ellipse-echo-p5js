@@ -18,12 +18,13 @@ function reset_particles(ui, sim) {
         vs = range(1, ui.dirs).map(r => [0, 0]);
         const tang0 = interior_point ? [1, 0] : vperp(n0);
         vs[0] = tang0;
+        const spoke_rot_rad = 0; // toRad(ui.spokeRot);
         for (let i = 1; i <= ui.dirs; i++)
             // renormalize so doesn't lose precision at every rotation
             // the approach below is fast but introduces a lot of noise!
             //could use 8th or quarter symmetry
             //vs[i] = vnorm(vrot(vs[i - 1], cosStep, sinStep));
-            vs[i] = vrot(tang0, Math.cos(rad_step * i), Math.sin(rad_step * i));
+            vs[i] = vrot(tang0, Math.cos(rad_step * i + spoke_rot_rad), Math.sin(rad_step * i + spoke_rot_rad));
         Qs = vs.map(v => vsum(sim.P0, v));
     }
     if (interior_point) {
@@ -85,7 +86,7 @@ function get_caustic_data(ui, sim, key) {
         const entry = dict_caustic_data[key];
         const [app, bpp] = entry.fn(ui.a, 1);
         const hypInter = entry.hyp ? entry.hypInterFn(ui.a,1,app,bpp): [0,0];
-        const hyp_points = entry.hyp ? range(-60,60,1).map(d=>hyperbola_points(app,bpp,toRad(d))) : [[0,0],[0,0]];
+        const hyp_points = entry.hyp ? range(-60,60).map(d=>hyperbola_points(app,bpp,toRad(d))) : [[0,0],[0,0]];
         // if hyperbola, P0 must lie between intersections
         const validP0 = entry.hyp ? Math.abs(sim.P0[0])<hypInter[0] : true;
         const tangFn = entry.hyp ? hypTangentsb : ellTangentsb;
@@ -184,7 +185,7 @@ function draw_sim(ui, sim, ui_dr) {
         dict_caustics[ui_dr.caustics].map(n=>draw_caustic_shapes(sim.caustic_list[n]));
     if (ui_dr.spokes) {
         draw_spokes(sim.P0, sim.Qs, clr_gray, .005);
-        sim.Qs.map(q => draw_point(q, clr_gray, .005));
+        sim.Qs.map(q => draw_point(q, clr_gray, .0025));
     }
     if (['centers', 'both'].includes(ui_dr.particles))
         sim.particles.map(z => draw_point(z, clr_tourquoise, .0025));

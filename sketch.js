@@ -4,6 +4,7 @@ let glob = {
   goBtn: null,
   resetBtn: null,
   configBtn: null,
+  resetUIBtn: null,
   go: false,
   bgColor: [0, 0, 0],
   scale: .7,
@@ -13,6 +14,7 @@ let glob = {
   gui_width:150,
   gui:null, ui_dr: null,
   json_url:null, // compress json into url
+  ui0:null,
   ui: {
     //go: false,
 
@@ -24,7 +26,7 @@ let glob = {
     // dirs
 
     dirs: 1800,
-    dirsMin: 2,
+    dirsMin: 1,
     dirsMax: 3600,
     dirsStep: 1,
     depart: ['border', 'center', 'focus', 'top vtx', 'bottom vtx', 'left vtx', 'right vtx', "mid minor","mid major"],
@@ -33,11 +35,16 @@ let glob = {
     tDegMin: -360,
     tDegMax: 360,
     tDegStep: 0.1,
-    // seed radius
+    // init radius
     initRadius:0,
     initRadiusMin:0,
     initRadiusMax:1,
     initRadiusStep:.01,
+    // spoke rotation
+    // spokeRot:0,
+    // spokeRotMin:-60,
+    // spokeRotMax:60,
+    // spokeRotStep:.1
     //bgColor: [0, 0, 0]
   },
   ui_dr: {
@@ -123,9 +130,10 @@ function setup() {
   textAlign(CENTER, BOTTOM);
   textStyle(NORMAL);
 
-  glob.goBtn = create_btn(20, 20, "Go", clr_blue, goBtnPressed);
-  glob.resetBtn = create_btn(80, 20, "Reset", clr_purple, resetBtnPressed);
-  glob.configBtn = create_btn(140,20, "Config", clr_dark_orange, configBtnPressed)
+  glob.goBtn = create_btn(20, 20, "Go", clr_blue, 50, goBtnPressed);
+  glob.resetBtn = create_btn(80, 20, "Reset", clr_purple, 50, resetBtnPressed);
+  glob.configBtn = create_btn(140,20, "Copy Config", clr_dark_orange, 80, configBtnPressed);
+  glob.resetUIBtn = create_btn(230,20, "Reset UI", clr_pink, 70, resetUIBtnPressed)
 
   glob.gui = prepare_main_gui(glob.gui_width);
   glob.gui_dr = prepare_draw_gui(glob.gui_width);
@@ -137,6 +145,7 @@ function setup() {
   glob.ctr = [windowWidth / 2, windowHeight / 2];
   glob.json_url = JsonUrl('lzma'); // JsonUrl is added to the window object
   reset_sim(glob.ui, glob.sim);
+  saveUI0(); // saves it as json for resetUIBtn
   // occurs after reset_sim to avoid race condition
   const params = getURLParams();
   if (params.config!=null)
@@ -158,6 +167,7 @@ function draw() {
   glob.goBtn.draw();
   glob.resetBtn.draw();
   glob.configBtn.draw();
+  glob.resetUIBtn.draw();
   if (glob.goBtn.state)
     update_sim(glob.ui, glob.sim, glob.ui_dr, false);
   else // should only reset if the control has changed
