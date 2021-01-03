@@ -8,6 +8,7 @@ let glob = {
   ctr0: [0, 0], ctr: [0, 0],
   mouse: [0, 0],
   dragged: false,
+  gui:null, ui_dr: null,
   ui: {
     //go: false,
 
@@ -61,7 +62,10 @@ let glob = {
 
 function windowResized() {
   //[glob.width, glob.height] = get_window_width_height();
+  
   resizeCanvas(windowWidth, windowHeight);
+  glob.gui_dr.setPosition(windowWidth-170, 20);
+  glob.ctr = [windowWidth / 2, windowHeight / 2];
 }
 
 function gui_changed() {
@@ -81,31 +85,31 @@ function setup() {
   glob.goBtn = create_btn(20, 20, "Go", clr_blue, goBtnPressed);
   glob.resetBtn = create_btn(80, 20, "Reset", clr_purple, resetBtnPressed);
 
-  let gui = createGui('Elliptic Echos');
+  glob.gui = createGui('Elliptic Echos');
   //gui.onchange = gui_changed;
-  gui.addObject(glob.ui);
-  gui.setPosition(20, 60);
-  gui.prototype.setWidth(150);
-  gui.prototype.setGlobalChangeHandler(gui_changed);
+  glob.gui.addObject(glob.ui);
+  glob.gui.setPosition(20, 60);
+  glob.gui.prototype.setWidth(150);
+  glob.gui.prototype.setGlobalChangeHandler(gui_changed);
 
-  let gui_dr = createGui('Draw Controls');
-  gui_dr.addObject(glob.ui_dr);
-  gui_dr.setPosition(20, 325);
-  gui_dr.prototype.setWidth(150);
+  glob.gui_dr = createGui('Draw Controls');
+  glob.gui_dr.addObject(glob.ui_dr);
+  glob.gui_dr.prototype.setWidth(150);
+  glob.gui_dr.setPosition(windowWidth-170, 20);
   // the 2nd argument is an index into the array.
-  gui_dr.prototype.setValue('speedPwr', 1);
-  gui_dr.prototype.setValue('internalStepsPwr', 2);
-  gui_dr.prototype.setValue('particles', 1);
-  gui_dr.prototype.setValue('clrSeed', 54);
-  gui_dr.prototype.setValue('caustics', 2);
-  gui_dr.prototype.setGlobalChangeHandler(gui_dr_changed);
+  glob.gui_dr.prototype.setValue('speedPwr', 1);
+  glob.gui_dr.prototype.setValue('internalStepsPwr', 2);
+  glob.gui_dr.prototype.setValue('particles', 1);
+  glob.gui_dr.prototype.setValue('clrSeed', 54);
+  glob.gui_dr.prototype.setValue('caustics', 2);
+  glob.gui_dr.prototype.setGlobalChangeHandler(gui_dr_changed);
   glob.clrs = shuffle_seeded(clrs_crayola.map(c => c.rgb), glob.ui_dr.clrSeed);
   reset_sim(glob.ui, glob.sim);
   textAlign(CENTER, BOTTOM);
   textStyle(NORMAL);
   // only call draw when then gui is changed
   //loop();
-  glob.ctr = [windowWidth / 2 + (20+150)/2, windowHeight / 2];
+  glob.ctr = [windowWidth / 2, windowHeight / 2];
 }
 
 function draw() {
