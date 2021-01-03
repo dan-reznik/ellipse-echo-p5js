@@ -153,7 +153,7 @@ function draw() {
   // translate(glob.ctr[0], glob.ctr[1]);
   // scale(glob.width / (glob.scale*glob.scaleFactor));
   // rotate(dict_rot[glob.ui.rot]); 
-  draw_text("© 2021 Dan S. Reznik", [.92 * windowWidth, .97 * windowHeight], clr_yellow, 20);
+  draw_text("© 2021 Dan S. Reznik", [.94 * windowWidth, .98 * windowHeight], clr_yellow, 16);
   translate(glob.ctr[0], glob.ctr[1]);
   scale(glob.scale * windowHeight / 2);
   draw_sim(glob.ui, glob.sim, glob.ui_dr);
