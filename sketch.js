@@ -139,8 +139,8 @@ function setup() {
   const params = getURLParams();
   if (params.config!=null) {
     restoreSettings(params.config);
-  } else
-    reset_sim(glob.ui, glob.sim);
+  }
+  reset_sim(glob.ui, glob.sim);
 }
 
 function keyPressed() {
