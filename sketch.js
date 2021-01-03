@@ -8,6 +8,7 @@ let glob = {
   ctr0: [0, 0], ctr: [0, 0],
   mouse: [0, 0],
   dragged: false,
+  gui_width:150,
   gui:null, ui_dr: null,
   ui: {
     //go: false,
@@ -42,7 +43,7 @@ let glob = {
     particles: ['centers', 'chain', 'both'],
     comTrail: false,
     spokes: false,
-    newton: false,
+    newton: true,
     caustics: ["off", "3", "3,4", "3,4,6"],
     //bgColor: [0, 0, 0]
     clrSeed: 1,
@@ -64,7 +65,7 @@ function windowResized() {
   //[glob.width, glob.height] = get_window_width_height();
   
   resizeCanvas(windowWidth, windowHeight);
-  glob.gui_dr.setPosition(windowWidth-170, 20);
+  glob.gui_dr.setPosition(windowWidth-glob.gui_width-20, 20);
   glob.ctr = [windowWidth / 2, windowHeight / 2];
 }
 
@@ -79,30 +80,40 @@ function gui_dr_changed() {
   redraw();
 }
 
+function prepare_main_gui(width) {
+  const gui = createGui('Elliptic Echos');
+  //gui.onchange = gui_changed;
+  gui.addObject(glob.ui);
+  gui.setPosition(20, 60);
+  gui.prototype.setWidth(width);
+  gui.prototype.setGlobalChangeHandler(gui_changed);
+  return gui;
+}
+
+function prepare_draw_gui(width) {
+  const gui_dr = createGui('Draw Controls');
+  gui_dr.addObject(glob.ui_dr);
+  gui_dr.prototype.setWidth(width);
+  gui_dr.setPosition(windowWidth-width-20, 20);
+  // the 2nd argument is an index into the array.
+  gui_dr.prototype.setValue('speedPwr', 1);
+  gui_dr.prototype.setValue('internalStepsPwr', 2);
+  gui_dr.prototype.setValue('particles', 1);
+  gui_dr.prototype.setValue('clrSeed', 54);
+  gui_dr.prototype.setValue('caustics', 2);
+  gui_dr.prototype.setGlobalChangeHandler(gui_dr_changed);
+  return gui_dr;
+}
+
 function setup() {
   //[glob.width, glob.height] = get_window_width_height();
   createCanvas(windowWidth, windowHeight);
   glob.goBtn = create_btn(20, 20, "Go", clr_blue, goBtnPressed);
   glob.resetBtn = create_btn(80, 20, "Reset", clr_purple, resetBtnPressed);
 
-  glob.gui = createGui('Elliptic Echos');
-  //gui.onchange = gui_changed;
-  glob.gui.addObject(glob.ui);
-  glob.gui.setPosition(20, 60);
-  glob.gui.prototype.setWidth(150);
-  glob.gui.prototype.setGlobalChangeHandler(gui_changed);
+  glob.gui = prepare_main_gui(glob.gui_width);
+  glob.gui_dr = prepare_draw_gui(glob.gui_width);
 
-  glob.gui_dr = createGui('Draw Controls');
-  glob.gui_dr.addObject(glob.ui_dr);
-  glob.gui_dr.prototype.setWidth(150);
-  glob.gui_dr.setPosition(windowWidth-170, 20);
-  // the 2nd argument is an index into the array.
-  glob.gui_dr.prototype.setValue('speedPwr', 1);
-  glob.gui_dr.prototype.setValue('internalStepsPwr', 2);
-  glob.gui_dr.prototype.setValue('particles', 1);
-  glob.gui_dr.prototype.setValue('clrSeed', 54);
-  glob.gui_dr.prototype.setValue('caustics', 2);
-  glob.gui_dr.prototype.setGlobalChangeHandler(gui_dr_changed);
   glob.clrs = shuffle_seeded(clrs_crayola.map(c => c.rgb), glob.ui_dr.clrSeed);
   reset_sim(glob.ui, glob.sim);
   textAlign(CENTER, BOTTOM);
@@ -112,12 +123,21 @@ function setup() {
   glob.ctr = [windowWidth / 2, windowHeight / 2];
 }
 
+function keyPressed() {
+  if (!glob.goBtn.state)
+    if (keyCode === LEFT_ARROW)
+      update_sim(glob.ui, glob.sim, glob.ui_dr, true);
+    else if (keyCode === RIGHT_ARROW)
+      update_sim(glob.ui, glob.sim, glob.ui_dr, false);
+}
+
+
 function draw() {
   background(glob.bgColor);
   glob.goBtn.draw();
   glob.resetBtn.draw();
   if (glob.goBtn.state)
-    update_sim(glob.ui, glob.sim, glob.ui_dr);
+    update_sim(glob.ui, glob.sim, glob.ui_dr, false);
   else // should only reset if the control has changed
     ;//reset_sim(glob.ui, glob.sim);
   push();

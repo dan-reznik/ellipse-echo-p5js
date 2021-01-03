@@ -118,12 +118,12 @@ function update_caustic_once(ui, caustic, speed, newton) {
     caustic.vs = new_point_vels.map(pv => pv.v);
 }
 
-function update_sim(ui, sim, ui_dr) {
+function update_sim(ui, sim, ui_dr, bwd=false) {
     const imax = Math.pow(10, ui_dr.internalStepsPwr);
     const speed = Math.pow(10, ui_dr.speedPwr);
     for (let i = 0; i < imax; i++) {
-        update_sim_once(ui, sim, speed, ui_dr.newton)
-        sim.caustic_list.map(c=>update_caustic_once(ui, c, speed, ui_dr.newton));
+        update_sim_once(ui, sim, bwd?-speed:speed, ui_dr.newton)
+        sim.caustic_list.map(c=>update_caustic_once(ui, c, bwd?-speed:speed, ui_dr.newton));
     }
 }
 
