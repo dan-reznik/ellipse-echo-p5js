@@ -21,19 +21,31 @@ function caustic_N4(a,b) {
     return [ap,bp];
 }
 
+// hyperbolic
+function caustic_N4_si(a,b) {
+    const a2=a*a,b2=b*b;
+    const c=Math.sqrt(a2-b2);
+    const app=a*Math.sqrt(a2-2*b2)/c;
+    const bpp=b2/c;
+    return [app,bpp];
+}
+
+function hypInter_N4_si(a,b,app,bpp) {
+    const c = Math.sqrt(a*a-b*b);
+    return [(a/c)*app,(b/c)*bpp];
+}
+
+// TO DO: apollonius points
+
 function caustic_N5(a,b) 
 {
    // c2 = app^2-bpp^2 => bpp^2=app^2-c2;
    const app2 = caustic_N5_app2(a, b, a*a);
    const c2 = a*a-b*b;
+   const app = Math.sqrt(app2);
    const bpp = Math.sqrt(app2-c2);
-   return [Math.sqrt(app2),bpp];
+   return [app,bpp];
 }
-
-// TO DO: caustic N5
-// hyp caustic N4si
-// apollonius points
-
 
 function caustic_N6(a,b) {
     const denom=a+b;
@@ -42,12 +54,25 @@ function caustic_N6(a,b) {
     return [ap,bp];
 }
 
-function bounce_caustic(a, b, P0, app, bpp, n) {
+function bounce_caustic(a, b, P0, app, bpp, n, tangFn) {
     let tangs, nextP=P0, ps = [JSON.parse(JSON.stringify(P0))];
     for (let i = 0; i < n-1; i++) {
-        tangs = ellTangentsb(app, bpp, nextP);
+        tangs = tangFn(app, bpp, nextP);
         nextP = ellInterRayb(a, b, nextP, vdiff(tangs[0], nextP));
         ps.push(nextP);
+    }
+    return(ps);
+}
+
+function bounce_billiard(a, b, P0, v0, n) {
+    let prevP,nextP=P0, ps = [JSON.parse(JSON.stringify(P0))];
+    let v=v0, grad;
+    for (let i = 0; i < n-1; i++) {
+        prevP=nextP;
+        nextP = ellInterRayb(a, b, nextP, v);
+        ps.push(nextP);
+        grad = ell_grad(a,b,nextP);
+        v = vrefl(vdiff(prevP,nextP),grad);
     }
     return(ps);
 }

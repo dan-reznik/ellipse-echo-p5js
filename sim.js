@@ -71,24 +71,39 @@ function max_index(vals) {
     return imax;
 }
 
-const ell_caustic_dict = {
- 3: {fn:caustic_N3, clr:0},
- 4: {fn:caustic_N4, clr:1},
- 5: {fn:caustic_N5, clr:2},
- 6: {fn:caustic_N6, clr:3}
+const dict_caustic_data = {
+ 3: {fn:caustic_N3, clr:0, hyp:false, n:3},
+ 4: {fn:caustic_N4, clr:1, hyp:false, n:4},
+ 5: {fn:caustic_N5, clr:2, hyp:false, n:5},
+ 6: {fn:caustic_N6, clr:3, hyp:false, n:6},
+'4si' : {fn: caustic_N4_si, clr:4, hyp:true, n:4, hypInterFn: hypInter_N4_si }
 };
 
-function get_ell_caustic_data(ui, sim, n) {
+function get_caustic_data(ui, sim, key) {
     let obj = null;
-    if (n in ell_caustic_dict) {
-        const [app, bpp] = ell_caustic_dict[n].fn(ui.a, 1);
-        //sim.orbit = orbit_N3(ui.a, 1, ui.tDeg);
-        const orbit = bounce_caustic(ui.a, 1, sim.P0, app, bpp, n);
-        const tangs = ellTangentsb(app, bpp, sim.P0);
-        const tangs_dir = tangs.map(p => vnorm(vdiff(p, sim.P0)));
-        //const index_cw = max_index(sim.vs.map(v => vdot(v, tangs_dir[0])));
-        //const index_ccw = max_index(sim.vs.map(v => vdot(v, tangs_dir[1])));
-        obj = { n: n, app: app, bpp: bpp, orbit: orbit, vs: tangs_dir, ps:[sim.P0,sim.P0], clr_index:ell_caustic_dict[n].clr/*index_cw: index_cw, index_ccw: index_ccw*/ };
+    if (key in dict_caustic_data) {
+        const entry = dict_caustic_data[key];
+        const [app, bpp] = entry.fn(ui.a, 1);
+        const hypInter = entry.hyp ? entry.hypInterFn(ui.a,1,app,bpp): [0,0];
+        const hyp_points = entry.hyp ? range(-60,60,1).map(d=>hyperbola_points(app,bpp,toRad(d))) : [[0,0],[0,0]];
+        // if hyperbola, P0 must lie between intersections
+        const validP0 = entry.hyp ? Math.abs(sim.P0[0])<hypInter[0] : true;
+        const tangFn = entry.hyp ? hypTangentsb : ellTangentsb;
+        const tangs = validP0 ? tangFn(app, bpp, sim.P0) : [[0,0],[0,0]];
+        // was bounce caustic but bad for hyperbolas
+        const vs = validP0 ? tangs.map(p => vnorm(vdiff(p, sim.P0))) : [[0,0],[0,0]];
+        const orbit = validP0 ? bounce_billiard(ui.a, 1, sim.P0, vs[0], entry.n) : [sim.P0];
+        
+        obj = { 
+            hyp: entry.hyp,
+            validP0: validP0,
+            key:key,
+            app:app, bpp:bpp,
+            orbit:orbit, vs:vs, ps:[sim.P0,sim.P0],
+            clr_index:entry.clr,
+            tangFn:tangFn,
+            hypBranch1: hyp_points.map(p=>p[0]),
+            hypBranch2: hyp_points.map(p=>p[1]) };
     }
     return obj;
 }
@@ -96,7 +111,7 @@ function get_ell_caustic_data(ui, sim, n) {
 function reset_sim(ui, sim) {
     reset_P0(ui, sim);
     reset_particles(ui, sim);
-    sim.caustic_list = [3,4,5,6].map(n=>get_ell_caustic_data(ui, sim,n));
+    sim.caustic_list =Object.keys(dict_caustic_data).map(n=>get_caustic_data(ui, sim,n));
     sim.com = [sim.P0];
 }
 
@@ -122,11 +137,13 @@ function update_sim_once(ui, sim, speed, newton) {
 }
 
 function update_caustic_once(ui, caustic, speed, newton) {
-    const new_particles = caustic.ps.map((z, i) => vsum(z, vscale(caustic.vs[i], speed)));
-    const crossed = new_particles.map(z => outside_ell(ui.a, 1.0, z));
-    const new_point_vels = caustic.vs.map((v, i) => crossed[i] ? get_refl_vel(ui.a, new_particles[i], v, speed, newton) : { p: new_particles[i], v: v });
-    caustic.ps = new_point_vels.map(pv => pv.p);
-    caustic.vs = new_point_vels.map(pv => pv.v);
+    if (caustic.validP0) {
+        const new_particles = caustic.ps.map((z, i) => vsum(z, vscale(caustic.vs[i], speed)));
+        const crossed = new_particles.map(z => outside_ell(ui.a, 1.0, z));
+        const new_point_vels = caustic.vs.map((v, i) => crossed[i] ? get_refl_vel(ui.a, new_particles[i], v, speed, newton) : { p: new_particles[i], v: v });
+        caustic.ps = new_point_vels.map(pv => pv.p);
+        caustic.vs = new_point_vels.map(pv => pv.v);
+    }
 }
 
 function update_sim(ui, sim, ui_dr, bwd=false) {
@@ -140,8 +157,13 @@ function update_sim(ui, sim, ui_dr, bwd=false) {
 
 function draw_caustic_shapes(caustic) {
     const clr = glob.clrs[caustic.clr_index];
-    draw_ellipse_low(caustic.app, caustic.bpp, clr_brown, .01);
-    draw_polygon(caustic.orbit, clr, .01);
+    if (caustic.hyp) {
+        draw_polyline(caustic.hypBranch1, clr_brown, .01);
+        draw_polyline(caustic.hypBranch2, clr_brown, .01);
+    } else
+        draw_ellipse_low(caustic.app, caustic.bpp, clr_brown, .01);
+    if (caustic.validP0)
+        draw_polygon(caustic.orbit, clr, .01);
 }
 
 function draw_caustic_ps(caustic) {
@@ -152,7 +174,8 @@ const dict_caustics = {
     "3": [0],
     "3,4": [0,1],
     "3,4,5": [0,1,2],
-    "3,4,5,6": [0,1,2,3]
+    "3,4,5,6": [0,1,2,3],
+    "3,4,4si": [0,1,4],
 }
 
 function draw_sim(ui, sim, ui_dr) {
@@ -165,7 +188,6 @@ function draw_sim(ui, sim, ui_dr) {
     }
     if (['centers', 'both'].includes(ui_dr.particles))
         sim.particles.map(z => draw_point(z, clr_tourquoise, .0025));
-    draw_point(sim.P0, clr_red, .01);
     if (sim.com.length > 1 && ui_dr.comTrail) {
         draw_polyline(sim.com, clr_green, .005);
         draw_point(sim.com[sim.com.length - 1], clr_green, .005);
@@ -176,4 +198,5 @@ function draw_sim(ui, sim, ui_dr) {
         dict_caustics[ui_dr.caustics].map(n=>draw_caustic_ps(sim.caustic_list[n]));
     if (ui_dr.hiliteBand>0)
         draw_polyline(sim.particles.slice(0,(sim.particles.length*ui_dr.hiliteBand)-1), clr_cyan,.01);
+    draw_point(sim.P0, clr_red, .01);
 }

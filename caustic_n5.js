@@ -34,8 +34,6 @@ function caustic_N5_ks(a,b) {
       return sum(fx);
   }
   
-  // TO DO: test dfx 
-  // caustic_N5_iteration(1.5,1,1.2)
   function caustic_N5_newton_step(a,b,x) {
       let ks = caustic_N5_ks(a,b);
       let xs = caustic_N5_xs(x);

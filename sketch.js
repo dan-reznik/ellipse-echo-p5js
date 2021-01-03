@@ -26,7 +26,7 @@ let glob = {
     dirsStep: 1,
     depart: ['border', 'center', 'focus', 'top vtx', 'bottom vtx', 'left vtx', 'right vtx', "mid minor","mid major"],
     // tDeg
-    tDeg: 30.,
+    tDeg: 45.,
     tDegMin: -360,
     tDegMax: 360,
     tDegStep: 0.1,
@@ -44,11 +44,11 @@ let glob = {
     internalStepsPwr: [0, 1, 2, 3, 4],
     //go: false,
     // major axis
-    particles: ['centers', 'chain', 'both'],
+    particles: ['off','centers', 'chain', 'both'],
     comTrail: false,
     spokes: false,
     newton: true,
-    caustics: ["off", "3", "3,4", "3,4,5","3,4,5,6"],
+    caustics: ["off", "3", "3,4", "3,4,5","3,4,5,6","3,4,4si"],
     //bgColor: [0, 0, 0]
     clrSeed: 1,
     clrSeedMin: 0,
@@ -107,8 +107,8 @@ function prepare_draw_gui(width) {
   // the 2nd argument is an index into the array.
   gui_dr.prototype.setValue('speedPwr', 1);
   gui_dr.prototype.setValue('internalStepsPwr', 2);
-  gui_dr.prototype.setValue('particles', 1);
-  gui_dr.prototype.setValue('clrSeed', 54);
+  gui_dr.prototype.setValue('particles', 2);
+  gui_dr.prototype.setValue('clrSeed', 114);
   // gui_dr.prototype.setValue('caustics', 2);
   gui_dr.prototype.setGlobalChangeHandler(gui_dr_changed);
   return gui_dr;
