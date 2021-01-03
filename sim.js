@@ -74,7 +74,8 @@ function max_index(vals) {
 const ell_caustic_dict = {
  3: {fn:caustic_N3, clr:0},
  4: {fn:caustic_N4, clr:1},
- 6: {fn:caustic_N6, clr:2}
+ 5: {fn:caustic_N5, clr:2},
+ 6: {fn:caustic_N6, clr:3}
 };
 
 function get_ell_caustic_data(ui, sim, n) {
@@ -95,7 +96,7 @@ function get_ell_caustic_data(ui, sim, n) {
 function reset_sim(ui, sim) {
     reset_P0(ui, sim);
     reset_particles(ui, sim);
-    sim.caustic_list = [3,4,6].map(n=>get_ell_caustic_data(ui, sim,n));
+    sim.caustic_list = [3,4,5,6].map(n=>get_ell_caustic_data(ui, sim,n));
     sim.com = [sim.P0];
 }
 
@@ -150,7 +151,8 @@ function draw_caustic_ps(caustic) {
 const dict_caustics = {
     "3": [0],
     "3,4": [0,1],
-    "3,4,6": [0,1,2]
+    "3,4,5": [0,1,2],
+    "3,4,5,6": [0,1,2,3]
 }
 
 function draw_sim(ui, sim, ui_dr) {

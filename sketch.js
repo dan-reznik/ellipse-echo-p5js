@@ -48,7 +48,7 @@ let glob = {
     comTrail: false,
     spokes: false,
     newton: true,
-    caustics: ["off", "3", "3,4", "3,4,6"],
+    caustics: ["off", "3", "3,4", "3,4,5","3,4,5,6"],
     //bgColor: [0, 0, 0]
     clrSeed: 1,
     clrSeedMin: 0,
@@ -109,7 +109,7 @@ function prepare_draw_gui(width) {
   gui_dr.prototype.setValue('internalStepsPwr', 2);
   gui_dr.prototype.setValue('particles', 1);
   gui_dr.prototype.setValue('clrSeed', 54);
-  gui_dr.prototype.setValue('caustics', 2);
+  // gui_dr.prototype.setValue('caustics', 2);
   gui_dr.prototype.setGlobalChangeHandler(gui_dr_changed);
   return gui_dr;
 }

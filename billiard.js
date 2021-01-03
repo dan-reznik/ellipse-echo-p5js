@@ -21,6 +21,15 @@ function caustic_N4(a,b) {
     return [ap,bp];
 }
 
+function caustic_N5(a,b) 
+{
+   // c2 = app^2-bpp^2 => bpp^2=app^2-c2;
+   const app2 = caustic_N5_app2(a, b, a*a);
+   const c2 = a*a-b*b;
+   const bpp = Math.sqrt(app2-c2);
+   return [Math.sqrt(app2),bpp];
+}
+
 // TO DO: caustic N5
 // hyp caustic N4si
 // apollonius points

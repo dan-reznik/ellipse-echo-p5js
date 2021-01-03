@@ -44,8 +44,8 @@ function caustic_N5_ks(a,b) {
       return fx/dfx;
   }
   
-  // x0 is app^2
-  function caustic_N5_iteration(a, b, x0) {
+  // x0 is app^2, return app^2
+  function caustic_N5_app2(a, b, x0) {
       let x = x0;
       let its = 10;
       while (its-- > 0) {
@@ -53,5 +53,5 @@ function caustic_N5_ks(a,b) {
           if (negl(xstep)) break;
           x -= xstep;
       }
-      return Math.sqrt(x);
+      return x; // Math.sqrt(x);
   }
