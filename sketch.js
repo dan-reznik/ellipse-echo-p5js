@@ -1,7 +1,9 @@
 let glob = {
+  url: 'https://dan-reznik.github.io/ellipse-echo-p5js/',
   clrs: null,
   goBtn: null,
   resetBtn: null,
+  configBtn: null,
   go: false,
   bgColor: [0, 0, 0],
   scale: .7,
@@ -10,6 +12,7 @@ let glob = {
   dragged: false,
   gui_width:150,
   gui:null, ui_dr: null,
+  json_url:null, // compress json into url
   ui: {
     //go: false,
 
@@ -119,6 +122,7 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   glob.goBtn = create_btn(20, 20, "Go", clr_blue, goBtnPressed);
   glob.resetBtn = create_btn(80, 20, "Reset", clr_purple, resetBtnPressed);
+  glob.configBtn = create_btn(140,20, "Config", clr_dark_orange, configBtnPressed)
 
   glob.gui = prepare_main_gui(glob.gui_width);
   glob.gui_dr = prepare_draw_gui(glob.gui_width);
@@ -130,6 +134,10 @@ function setup() {
   // only call draw when then gui is changed
   //loop();
   glob.ctr = [windowWidth / 2, windowHeight / 2];
+  glob.json_url = JsonUrl('lzma'); // JsonUrl is added to the window object
+  const params = getURLParams();
+  if (params.config!=null)
+    restoreSettings(params.config);
 }
 
 function keyPressed() {
@@ -145,6 +153,7 @@ function draw() {
   background(glob.bgColor);
   glob.goBtn.draw();
   glob.resetBtn.draw();
+  glob.configBtn.draw();
   if (glob.goBtn.state)
     update_sim(glob.ui, glob.sim, glob.ui_dr, false);
   else // should only reset if the control has changed

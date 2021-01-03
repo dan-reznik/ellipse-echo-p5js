@@ -34,6 +34,29 @@ function resetBtnPressed() {
   reset_sim(glob.ui, glob.sim);
 }
 
+function updateClipboard(newClip) {
+  navigator.clipboard.writeText(newClip).then(function() {
+    /* clipboard successfully set */
+  }, function() {
+    /* clipboard write failed */
+  });
+}
+
+function configBtnPressed() {
+  const gui_obj = glob.gui.prototype.getValuesAsJSON();
+  const gui_dr_obj = glob.gui_dr.prototype.getValuesAsJSON();
+  const both_obj = { gui: gui_obj, gui_dr: gui_dr_obj};
+  // async promise
+  glob.json_url.compress(both_obj).then(output=>updateClipboard(glob.url+"?config="+output));
+}
+
+function restoreSettings(str) {
+  glob.json_url.decompress(str).then(json => { 
+    glob.gui.prototype.setValuesFromJSON(json.gui);
+    glob.gui_dr.prototype.setValuesFromJSON(json.gui_dr); })
+}
+
+
 function goBtnPressed() {
   if (glob.goBtn.state)
     set_btn(glob.goBtn, "Go", clr_blue, false);
