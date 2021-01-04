@@ -1,4 +1,12 @@
 
+function cubic_discriminant(k0, k1, k2, k3) {
+  return 18 * k0 * k1 * k2 * k3 -
+  4 * k2 * k2 * k2 * k0 + 
+  k2 * k2 * k1 * k1 -
+  4 * k3 * k1 * k1 * k1 - 
+  27 * k3 * k3 * k0 * k0;
+}
+
 // https://gist.github.com/weepy/6009631
 function cubic_roots(ks) { // k0,k1,k2,k3
   let [d, c, b, a] = ks;
