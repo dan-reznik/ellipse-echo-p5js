@@ -188,6 +188,17 @@ function update_apollonius_once(ui, sim, speed, newton) {
     sim.apollonius_list.map((app,i)=>{app.curr = new_point_vels[i].p; app.vel = new_point_vels[i].v;});
 }
 
+
+function get_shoot(ui,sim,ui_dr) {
+    const t = toRad(ui_dr.shootAngle);
+    const ct = Math.cos(t), st = Math.sin(t);
+    const nhat = ell_norm(ui.a,1,sim.P0);
+    const nhat_rot = vrot(nhat,ct,st);
+    const ps = bounce_billiard(ui.a, 1, sim.P0, nhat_rot, ui_dr.bounces);
+    return { nhat:nhat_rot, ps:ps };
+
+}
+
 function update_sim(ui, sim, ui_dr, bwd = false) {
     const imax = Math.pow(10, ui_dr.internalStepsPwr);
     const speed = Math.pow(10, ui_dr.speedPwr);
@@ -215,6 +226,14 @@ function draw_caustic_ps(caustic) {
     caustic.ps.map(p => draw_point(p, glob.clrs[caustic.clr_index], .005));
 }
 
+function draw_boundary_arrow(a,p,nhat,clr) {
+    draw_arrow(p, vsum(p,vscale(nhat,.2)), clr, .01);
+}
+
+function draw_ell_normal(a,p) {
+    draw_arrow(p, vsum(p,vscale(ell_norm(a,1,p),.2)), clr_white, .01);
+}
+
 function draw_sim(ui, sim, ui_dr) {
     draw_ellipse(ui.a, 1, clr_white, .01);
     if (ui_dr.evolute) {
@@ -225,6 +244,7 @@ function draw_sim(ui, sim, ui_dr) {
         sim.apollonius_list.map(app => {
             draw_point(app.boundary, clr_white, .005);
             draw_line_dashed(sim.P0, app.boundary, clr_white, .01);
+            draw_ell_normal(ui.a,app.boundary);
         });
     }
     if (ui.depart == "border")
@@ -252,5 +272,13 @@ function draw_sim(ui, sim, ui_dr) {
         if (ui_dr.apollonius && sim.apollonius_list.length > 0) {
             sim.apollonius_list.map(app => draw_point(app.curr, clr_white, .005));
         }
+    
+    if (ui_dr.shoot) {
+        const shoot = get_shoot(ui,sim,ui_dr);
+        draw_polyline(shoot.ps, clr_red, .01);
+        draw_boundary_arrow(ui.a,sim.P0,shoot.nhat,clr_red);
+    }
+
+    draw_ell_normal(ui.a,sim.P0);
     draw_point(sim.P0, clr_red, .01);
 }

@@ -70,7 +70,15 @@ let glob = {
     hiliteBandStep:.01,
     // evolute
     evolute: false,
-    apollonius:false
+    apollonius:false,
+    shoot:false,
+    shootAngle:0,
+    shootAngleMin:-60,
+    shootAngleMax:60,
+    shootAngleStep:.1,
+    bounces:0,
+    bouncesMax:100,
+    bouncesMin:0
   },
   ui_caustics: {
      3:false,

@@ -94,12 +94,6 @@ function quadRoots(a, b, c) {
   }
 }
 
-function rotSinCos([x, y], st, ct) {
-  return [ct * x - st * y, st * x + ct * y];
-}
-
-rot = (v,th) => rotSinCos(v,Math.sin(th),Math.cos(th)) 
-
 vNaN = (p) => isNaN(p[0])||isNaN(p[1]);
 vdiff = (u, v) => [u[0] - v[0], u[1] - v[1]];
 vinv = (u) => [1/u[0],1/u[1]]; // u.map(u0=>1/u0);
@@ -125,6 +119,7 @@ vray = (p,n,t) => vsum(p,vscale(n,t));
 vrefl = (v,n) => vdiff(vscale(n,2*vdot(v,n)/magn2(n)),v);
 
 vrot = ([x,y],ct,st) => [ct*x+st*y,-st*x+ct*y];
+vrotRel = (p,p0,ct,st) => vsum(vrot(vdiff(p,p0),ct,st),p0);
 
 function circle_inversion(p, {ctr, R}) {
    const dp = vdiff(p, ctr);

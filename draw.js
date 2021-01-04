@@ -1,6 +1,21 @@
 //extSize(32);
 //text('word', 10, 30);
 
+function draw_arrow(from, to, rgb, stroke_w) {
+  const p80 = vinterp(to,from,.3);
+  const t = toRad(15.);
+  const ct = Math.cos(t), st = Math.sin(t);
+  const t1 = vrotRel(p80,to,ct,st);
+  const t2 = vrotRel(p80,to,ct,-st);
+  push();
+  stroke(rgb);
+  strokeWeight(stroke_w);
+  line(from[0], from[1], to[0], to[1]);
+  fill(rgb);
+  triangle(to[0], to[1], t1[0], t1[1], t2[0],t2[1]);
+  pop();  
+}
+
 function draw_text(txt, p, rgb, size=1) {
   push();
   textSize(size);
