@@ -67,7 +67,10 @@ let glob = {
     hiliteBand:0,
     hiliteBandMin:0,
     hiliteBandMax:1,
-    hiliteBandStep:.01
+    hiliteBandStep:.01,
+    // evolute
+    evolute: false,
+    apollonius:false
   },
   ui_caustics: {
      3:false,
@@ -83,6 +86,9 @@ let glob = {
     vs: null,
     particles: null,
     caustic_list: null,
+    evolute: null,
+    evolute_inters: [],
+    apollonius_list: [],
     com: [],
     steps: 0
   }
@@ -177,10 +183,10 @@ function setup() {
 }
 
 function keyPressed() {
-  if (!glob.goBtn.state) {
-    if (keyCode === LEFT_ARROW)
+  if (!glob.goBtn.state && mouse_in_ell()) {
+    if (keyCode == LEFT_ARROW || keyCode == DOWN_ARROW)
       update_sim(glob.ui, glob.sim, glob.ui_dr, true);
-    else if (keyCode === RIGHT_ARROW)
+    else if (keyCode == RIGHT_ARROW || keyCode == UP_ARROW)
       update_sim(glob.ui, glob.sim, glob.ui_dr, false);
     redraw();
   }
@@ -217,7 +223,7 @@ function mouseWheel(event) {
 }
 
 function mouse_in_ell() {
-  let p = vscale(vdiff(glob.mouse, glob.ctr), 2 / (glob.scale * windowHeight));
+  let p = vscale(vdiff([mouseX,mouseY], glob.ctr), 2 / (glob.scale * windowHeight));
   return in_ell(glob.ui.a, 1, p);
 }
 

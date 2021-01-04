@@ -112,10 +112,26 @@ function reset_caustics(ui, sim) {
     sim.caustic_list = Object.keys(dict_caustic_data).map(k => get_caustic_data(ui, sim, k));
 }
 
+function reset_evolute(ui, sim) {
+    sim.evolute = range(0, 359).map(d => ell_evolute(ui.a, 1, d));
+    const [ix, iy] = evolute_inter(ui.a, 1);
+    sim.evolute_inters = [[ix, iy], [-ix, iy], [-ix, -iy], [ix, -iy]];
+}
+
+function reset_apollonius(ui, sim) {
+    const ks = apolloniusKs(ui.a, 1, sim.P0);
+    const roots = cubic_roots(ks)
+    const qs = roots.filter(r => !r.complex).map(r => [r.re, sim.P0.y < 0 ? ellY(ui.a, 1, r.re) : -ellY(ui.a, 1, r.re)]);
+    sim.apollonius_list = qs.map(q => ({ boundary: q, vel: vnorm(vdiff(q, sim.P0)), curr: sim.P0 }));
+    // to do: needs state for apollonius
+}
+
 function reset_sim(ui, sim) {
     reset_P0(ui, sim);
     reset_particles(ui, sim);
     reset_caustics(ui, sim);
+    reset_evolute(ui, sim);
+    reset_apollonius(ui, sim);
     sim.com = [sim.P0];
     sim.steps = 0;
 }
@@ -152,12 +168,35 @@ function update_caustic_once(ui, caustic, speed, newton) {
     }
 }
 
+function update_apollonius_once_old(ui, sim, speed) {
+    // jog position fwd
+    sim.apollonius_list.map(app => app.curr = vsum(app.curr, vscale(app.vel, speed)));
+    // for those who crossed, change velocity and reflect
+    sim.apollonius_list.filter(app => outside_ell(ui.a, 1.0, app.curr))
+        .map(app => {
+            // avoid newton:crossing is closest between apollonius point & P0
+            const dist = Math.min(edist(app.boundary, app.curr), edist(sim.P0, app.curr));
+            app.vel = vscale(app.vel, -1); // reflect
+            app.curr = vsum(app.curr, vscale(app.vel, Math.abs(speed) + dist));
+        });
+}
+
+function update_apollonius_once(ui, sim, speed, newton) {
+    let new_particles = sim.apollonius_list.map(app => vsum(app.curr, vscale(app.vel, speed)));
+    const crossed = new_particles.map(z => outside_ell(ui.a, 1.0, z));
+    const new_point_vels = sim.apollonius_list.map((app, i) => crossed[i] ? get_refl_vel(ui.a, new_particles[i], app.vel, speed, newton) : { p: new_particles[i], v: app.vel });
+    sim.apollonius_list.map((app,i)=>{app.curr = new_point_vels[i].p; app.vel = new_point_vels[i].v;});
+}
+
 function update_sim(ui, sim, ui_dr, bwd = false) {
     const imax = Math.pow(10, ui_dr.internalStepsPwr);
     const speed = Math.pow(10, ui_dr.speedPwr);
+    const speed_fb = bwd ? -speed : speed;
     for (let i = 0; i < imax; i++) {
-        update_sim_once(ui, sim, bwd ? -speed : speed, ui_dr.newton)
-        sim.caustic_list.map(c => c != null ? update_caustic_once(ui, c, bwd ? -speed : speed, ui_dr.newton) : null);
+        update_sim_once(ui, sim, speed_fb, ui_dr.newton)
+        sim.caustic_list.map(c => c != null ? update_caustic_once(ui, c, speed_fb, ui_dr.newton) : null);
+        if (sim.apollonius_list.length > 0)
+           update_apollonius_once(ui, sim, speed_fb, newton)
     }
 }
 
@@ -178,6 +217,17 @@ function draw_caustic_ps(caustic) {
 
 function draw_sim(ui, sim, ui_dr) {
     draw_ellipse(ui.a, 1, clr_white, .01);
+    if (ui_dr.evolute) {
+        draw_polyline(sim.evolute, clr_dark_gold, .01);
+        sim.evolute_inters.map(p => draw_point(p, clr_dark_gold, .005));
+    }
+    if (ui_dr.apollonius && sim.apollonius_list.length > 0) {
+        sim.apollonius_list.map(app => {
+            draw_point(app.boundary, clr_white, .005);
+            draw_line_dashed(sim.P0, app.boundary, clr_white, .01);
+            draw_point(app.curr, clr_almond, .01);
+        });
+    }
     if (ui.depart == "border")
         Object.values(glob.ui_caustics).map((v, i) => { if (v) draw_caustic_shapes(sim.caustic_list[i]) });
     if (ui_dr.spokes) {
@@ -192,8 +242,8 @@ function draw_sim(ui, sim, ui_dr) {
     }
     if (['chain', 'both'].includes(ui_dr.particles)) {
         // only draw sufficiently far away points
-        const dmin = Math.pow(10.,glob.ui_dr.speedPwr);
-        const chain_filt = sim.particles.filter((p,i)=>i==0?true:magn(p,sim.particles[i-1])>dmin);
+        const dmin = Math.pow(10., glob.ui_dr.speedPwr);
+        const chain_filt = sim.particles.filter((p, i) => i == 0 ? true : magn(p, sim.particles[i - 1]) > dmin);
         draw_polyline(chain_filt, clr_blue, .01);
     }
     if (ui.depart == "border")

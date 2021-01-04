@@ -1,3 +1,27 @@
+function ellY(a,b,x) {
+    return b*Math.sqrt(1.0 - (x*x)/(a*a));
+}
+
+function ell_evolute(a,b,tDeg) {
+    const a2=a*a,b2=b*b;
+    const c2=a2-b2;
+    const t = toRad(tDeg);
+    const cc=Math.cos(t);
+    const ss=Math.sin(t);
+    return[(c2/a)*cc*cc*cc, (-c2/b)*ss*ss*ss];
+}
+
+// positive x and positive y
+function evolute_inter(a, b) {
+    const a2 = a * a, b2 = b * b;
+    const a2pb2 = a2 + b2;
+    const a4mb4 = a2*a2 - b2*b2;
+    const denom = Math.sqrt(a4mb4) * a2pb2;
+    const xp = (a2 * Math.pow(a2 - 2 * b2, 1.5)) / denom;
+    const yp = (b2 * Math.pow(2 * a2 - b2, 1.5)) / denom;
+    return [xp, yp];
+}
+
 function hyperbola_points(a,b,t) {
     const x = a*Math.cosh(t);
     const y = b*Math.sinh(t);
