@@ -121,7 +121,7 @@ function reset_evolute(ui, sim) {
 function reset_apollonius(ui, sim) {
     const ks = apolloniusKs(ui.a, 1, sim.P0);
     const roots = cubic_roots(ks)
-    const qs = roots.filter(r => !r.complex).map(r => [r.re, sim.P0.y < 0 ? ellY(ui.a, 1, r.re) : -ellY(ui.a, 1, r.re)]);
+    const qs = roots.filter(r => !r.complex).map(r => [r.re, sim.P0[1] < 0 ? ellY(ui.a, 1, r.re) : -ellY(ui.a, 1, r.re)]);
     sim.apollonius_list = qs.map(q => ({ boundary: q, vel: vnorm(vdiff(q, sim.P0)), curr: sim.P0 }));
     // to do: needs state for apollonius
 }
