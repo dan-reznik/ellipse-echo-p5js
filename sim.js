@@ -225,7 +225,6 @@ function draw_sim(ui, sim, ui_dr) {
         sim.apollonius_list.map(app => {
             draw_point(app.boundary, clr_white, .005);
             draw_line_dashed(sim.P0, app.boundary, clr_white, .01);
-            draw_point(app.curr, clr_almond, .01);
         });
     }
     if (ui.depart == "border")
@@ -250,5 +249,8 @@ function draw_sim(ui, sim, ui_dr) {
         Object.values(glob.ui_caustics).map((v, i) => { if (v) draw_caustic_ps(sim.caustic_list[i]) });
     if (ui_dr.hiliteBand > 0)
         draw_polyline(sim.particles.slice(0, (sim.particles.length * ui_dr.hiliteBand) - 1), clr_cyan, .01);
+        if (ui_dr.apollonius && sim.apollonius_list.length > 0) {
+            sim.apollonius_list.map(app => draw_point(app.curr, clr_white, .005));
+        }
     draw_point(sim.P0, clr_red, .01);
 }
