@@ -117,6 +117,7 @@ function reset_sim(ui, sim) {
     reset_particles(ui, sim);
     reset_caustics(ui, sim);
     sim.com = [sim.P0];
+    sim.steps = 0;
 }
 
 function get_refl_vel(a, from, vel, speed, newton) {
@@ -138,6 +139,7 @@ function update_sim_once(ui, sim, speed, newton) {
     sim.particles = new_point_vels.map(pv => pv.p);
     sim.vs = new_point_vels.map(pv => pv.v);
     sim.com.push(vertex_avg(sim.particles));
+    sim.steps++;
 }
 
 function update_caustic_once(ui, caustic, speed, newton) {
@@ -184,7 +186,7 @@ function draw_sim(ui, sim, ui_dr) {
     }
     if (['centers', 'both'].includes(ui_dr.particles))
         sim.particles.map(z => draw_point(z, clr_tourquoise, .0025));
-    if (sim.com.length > 1 && ui_dr.comTrail) {
+    if (sim.com.length > 0 && ui_dr.comTrail) {
         draw_polyline(sim.com, clr_green, .005);
         draw_point(sim.com[sim.com.length - 1], clr_green, .005);
     }

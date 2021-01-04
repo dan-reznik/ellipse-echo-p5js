@@ -68,6 +68,7 @@ function restoreSettings(str) {
     glob.gui_dr.prototype.setValuesFromJSON(json.gui_dr);
     glob.gui_caustics.prototype.setValuesFromJSON(json.gui_caustics);
     glob.ctr = json.ctr;
+    glob.ctr = [windowWidth/2,windowHeight/2];
     glob.scale = json.scale;
     reset_sim(glob.ui, glob.sim);
     redraw(); })

@@ -83,7 +83,8 @@ let glob = {
     vs: null,
     particles: null,
     caustic_list: null,
-    com: []
+    com: [],
+    steps: 0
   }
 };
 
