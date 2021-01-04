@@ -75,13 +75,15 @@ function restoreSettings(str) {
 
 function resetUIBtnPressed() {
   restoreSettings(glob.ui0);
+  set_btn(glob.goBtn, "Go", clr_blue, false);
 }
 
-
 function goBtnPressed() {
-  if (glob.goBtn.state)
+  if (glob.goBtn.state) {
     set_btn(glob.goBtn, "Go", clr_blue, false);
-  else
+  }
+  else {
     set_btn(glob.goBtn, "Stop", clr_red, true);
+  }
   //console.log("Go Btn pressed!", glob.goBtn);
 }

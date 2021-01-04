@@ -150,11 +150,12 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   textAlign(CENTER, BOTTOM);
   textStyle(NORMAL);
+  strokeCap(SQUARE);
 
   glob.goBtn = create_btn(20, 20, "Go", clr_blue, 50, goBtnPressed);
   glob.resetBtn = create_btn(80, 20, "Reset", clr_purple, 50, resetBtnPressed);
   glob.configBtn = create_btn(140,20, "Copy Config", clr_dark_orange, 80, configBtnPressed);
-  glob.resetUIBtn = create_btn(230,20, "Reset UI", clr_pink, 70, resetUIBtnPressed)
+  glob.resetUIBtn = create_btn(230, 20, "Reset UI", clr_pink, 70, resetUIBtnPressed);
 
   glob.gui = prepare_main_gui(glob.gui_width);
   glob.gui_dr = prepare_draw_gui(glob.gui_width);
@@ -172,38 +173,36 @@ function setup() {
   const params = getURLParams();
   if (params.config!=null)
     restoreSettings(params.config);
-  // must execute prior to params.
 }
 
 function keyPressed() {
-  if (!glob.goBtn.state)
+  if (!glob.goBtn.state) {
     if (keyCode === LEFT_ARROW)
       update_sim(glob.ui, glob.sim, glob.ui_dr, true);
     else if (keyCode === RIGHT_ARROW)
       update_sim(glob.ui, glob.sim, glob.ui_dr, false);
+    redraw();
+  }
 }
 
-
-function draw() {
-  background(glob.bgColor);
+function draw_btns() {
   glob.goBtn.draw();
   glob.resetBtn.draw();
   glob.configBtn.draw();
   glob.resetUIBtn.draw();
+}
+
+function draw() {
+  background(glob.bgColor);
+  draw_btns();
   if (glob.goBtn.state)
     update_sim(glob.ui, glob.sim, glob.ui_dr, false);
-  else // should only reset if the control has changed
-    ;//reset_sim(glob.ui, glob.sim);
   push();
-  // translate(glob.ctr[0], glob.ctr[1]);
-  // scale(glob.width / (glob.scale*glob.scaleFactor));
-  // rotate(dict_rot[glob.ui.rot]); 
   draw_text("© 2021 Dan S. Reznik", [.94 * windowWidth, .98 * windowHeight], clr_yellow, 16);
   translate(glob.ctr[0], glob.ctr[1]);
   scale(glob.scale * windowHeight / 2);
   draw_sim(glob.ui, glob.sim, glob.ui_dr);
   pop();
-
   return (glob.goBtn.state);
 }
 
@@ -212,8 +211,7 @@ function mouseWheel(event) {
     glob.scale *= 1.05;
   else
     glob.scale *= 0.95;
-  if (!glob.goBtn.state)
-    redraw();
+  redraw();
   return false;
 }
 
@@ -224,6 +222,7 @@ function mouse_in_ell() {
 
 function mousePressed() {
   glob.mouse = [mouseX, mouseY];
+  //check_btns();
   if (mouse_in_ell()) {
     glob.dragged = true;
     glob.ctr0 = JSON.parse(JSON.stringify(glob.ctr));
@@ -238,6 +237,5 @@ function mouseReleased() {
 function mouseDragged() {
   if (glob.dragged)
     glob.ctr = vsum(glob.ctr0, vdiff([mouseX, mouseY], glob.mouse));
-  if (!glob.goBtn.state)
-    redraw();
+  redraw();
 }

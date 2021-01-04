@@ -188,8 +188,12 @@ function draw_sim(ui, sim, ui_dr) {
         draw_polyline(sim.com, clr_green, .005);
         draw_point(sim.com[sim.com.length - 1], clr_green, .005);
     }
-    if (['chain', 'both'].includes(ui_dr.particles))
-        draw_polyline(sim.particles, clr_blue, .01);
+    if (['chain', 'both'].includes(ui_dr.particles)) {
+        // only draw sufficiently far away points
+        const dmin = Math.pow(10.,glob.ui_dr.speedPwr);
+        const chain_filt = sim.particles.filter((p,i)=>i==0?true:magn(p,sim.particles[i-1])>dmin);
+        draw_polyline(chain_filt, clr_blue, .01);
+    }
     if (ui.depart == "border")
         Object.values(glob.ui_caustics).map((v, i) => { if (v) draw_caustic_ps(sim.caustic_list[i]) });
     if (ui_dr.hiliteBand > 0)
