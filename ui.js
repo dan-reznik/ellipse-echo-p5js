@@ -45,7 +45,8 @@ function updateClipboard(newClip) {
 function get_UI_state() {
   const gui_obj = glob.gui.prototype.getValuesAsJSON();
   const gui_dr_obj = glob.gui_dr.prototype.getValuesAsJSON();
-  const both_obj = { gui: gui_obj, gui_dr: gui_dr_obj, ctr: glob.ctr, scale: glob.scale };
+  const gui_caustic_obj = glob.gui_caustics.prototype.getValuesAsJSON();
+  const both_obj = { gui: gui_obj, gui_dr: gui_dr_obj, gui_caustics: gui_caustic_obj, ctr: glob.ctr, scale: glob.scale };
   return both_obj;
 }
 
@@ -65,6 +66,7 @@ function restoreSettings(str) {
   glob.json_url.decompress(str).then(json => { 
     glob.gui.prototype.setValuesFromJSON(json.gui);
     glob.gui_dr.prototype.setValuesFromJSON(json.gui_dr);
+    glob.gui_caustics.prototype.setValuesFromJSON(json.gui_caustics);
     glob.ctr = json.ctr;
     glob.scale = json.scale;
     reset_sim(glob.ui, glob.sim);

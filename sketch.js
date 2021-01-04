@@ -12,7 +12,7 @@ let glob = {
   mouse: [0, 0],
   dragged: false,
   gui_width:150,
-  gui:null, ui_dr: null,
+  gui:null, gui_dr: null, gui_caustics:null,
   json_url:null, // compress json into url
   ui0:null,
   ui: {
@@ -58,7 +58,7 @@ let glob = {
     comTrail: false,
     spokes: false,
     newton: true,
-    caustics: ["off", "3", "3,4", "3,4,5","3,4,5,6","3,4,4si"],
+    //caustics: ["off", "3", "3,4", "3,4,5","3,4,5,6","3,4,4si"],
     //bgColor: [0, 0, 0]
     clrSeed: 1,
     clrSeedMin: 0,
@@ -68,6 +68,13 @@ let glob = {
     hiliteBandMin:0,
     hiliteBandMax:1,
     hiliteBandStep:.01
+  },
+  ui_caustics: {
+     3:false,
+     4:false,
+     5:false,
+     6:false,
+     "4si": false
   },
   sim: {
     // sim state should probably split
@@ -99,6 +106,11 @@ function gui_dr_changed() {
   redraw();
 }
 
+function gui_caustic_changed() {
+  //reset_sim(glob.ui, glob.sim);
+  redraw();
+}
+
 function prepare_main_gui(width) {
   const gui = createGui('Elliptic Echos');
   //gui.onchange = gui_changed;
@@ -110,18 +122,27 @@ function prepare_main_gui(width) {
 }
 
 function prepare_draw_gui(width) {
-  const gui_dr = createGui('Draw Controls');
-  gui_dr.addObject(glob.ui_dr);
-  gui_dr.prototype.setWidth(width);
-  gui_dr.setPosition(windowWidth-width-20, 20);
+  const gui = createGui('Draw Controls');
+  gui.addObject(glob.ui_dr);
+  gui.prototype.setWidth(width);
+  gui.setPosition(windowWidth-width-20, 20);
   // the 2nd argument is an index into the array.
-  gui_dr.prototype.setValue('speedPwr', 1);
-  gui_dr.prototype.setValue('internalStepsPwr', 2);
-  gui_dr.prototype.setValue('particles', 2);
-  gui_dr.prototype.setValue('clrSeed', 114);
-  // gui_dr.prototype.setValue('caustics', 2);
-  gui_dr.prototype.setGlobalChangeHandler(gui_dr_changed);
-  return gui_dr;
+  gui.prototype.setValue('speedPwr', 1);
+  gui.prototype.setValue('internalStepsPwr', 2);
+  gui.prototype.setValue('particles', 2);
+  gui.prototype.setValue('clrSeed', 114);
+  // gui.prototype.setValue('caustics', 2);
+  gui.prototype.setGlobalChangeHandler(gui_dr_changed);
+  return gui;
+}
+
+function prepare_caustic_gui(width) {
+  const gui = createGui('Caustics');
+  gui.addObject(glob.ui_caustics);
+  gui.prototype.setWidth(width);
+  gui.setPosition(20, 380);
+  gui.prototype.setGlobalChangeHandler(gui_dr_changed);
+  return gui;
 }
 
 function setup() {
@@ -137,6 +158,7 @@ function setup() {
 
   glob.gui = prepare_main_gui(glob.gui_width);
   glob.gui_dr = prepare_draw_gui(glob.gui_width);
+  glob.gui_caustics = prepare_caustic_gui(glob.gui_width);
 
   glob.clrs = shuffle_seeded(clrs_crayola.map(c => c.rgb), glob.ui_dr.clrSeed);
 
