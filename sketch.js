@@ -106,8 +106,10 @@ function windowResized() {
   //[glob.width, glob.height] = get_window_width_height();
 
   resizeCanvas(windowWidth, windowHeight);
-  glob.gui_dr.setPosition(windowWidth - glob.gui_width - 50, 20);
+  glob.gui_dr.setPosition(windowWidth - glob.gui_width - 20, 20);
+  glob.gui_caustics.setPosition(windowWidth - (glob.gui_width + 20)*2, 20);
   glob.ctr = [windowWidth / 2, windowHeight / 2];
+  redraw();
 }
 
 function gui_changed() {
