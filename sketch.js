@@ -1,10 +1,6 @@
 let glob = {
   url: 'https://dan-reznik.github.io/ellipse-echo-p5js/',
   clrs: null,
-  //goBtn: null,
-  //resetBtn: null,
-  //configBtn: null,
-  //resetUIBtn: null,
   bgColor: [0, 0, 0],
   scale: .7,
   ctr0: [0, 0], ctr: [0, 0],
@@ -233,7 +229,7 @@ function setup() {
 }
 
 function keyPressed() {
-  if (!glob.goBtn.state && mouse_in_ell()) {
+  if (!isLooping() && mouse_in_ell()) {
     if (keyCode == LEFT_ARROW || keyCode == DOWN_ARROW)
       update_sim(glob.ui, glob.sim, glob.ui_dr, true);
     else if (keyCode == RIGHT_ARROW || keyCode == UP_ARROW)
