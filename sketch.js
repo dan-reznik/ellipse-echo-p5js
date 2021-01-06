@@ -1,20 +1,19 @@
 let glob = {
   url: 'https://dan-reznik.github.io/ellipse-echo-p5js/',
   clrs: null,
-  goBtn: null,
-  resetBtn: null,
-  configBtn: null,
-  resetUIBtn: null,
-  go: false,
+  //goBtn: null,
+  //resetBtn: null,
+  //configBtn: null,
+  //resetUIBtn: null,
   bgColor: [0, 0, 0],
   scale: .7,
   ctr0: [0, 0], ctr: [0, 0],
   mouse: [0, 0],
   dragged: false,
-  gui_width:150,
-  gui:null, gui_dr: null, gui_caustics:null,
-  json_url:null, // compress json into url
-  ui0:null,
+  gui_width: 120,
+  gui_fc: null, gui_sim: null, gui_dr: null, gui_caustics: null,
+  json_url: null, // compress json into url
+  ui0: null,
   ui: {
     //go: false,
 
@@ -29,23 +28,24 @@ let glob = {
     dirsMin: 1,
     dirsMax: 3600,
     dirsStep: 1,
-    depart: ['border', 'center', 'focus', 'top vtx', 'bottom vtx', 'left vtx', 'right vtx', "mid minor","mid major"],
+    depart: ['border', 'center', 'focus', 'top vtx', 'bottom vtx', 'left vtx', 'right vtx', "mid minor", "mid major"],
     // tDeg
     tDeg: 45.,
     tDegMin: -360,
     tDegMax: 360,
     tDegStep: 0.1,
     // init radius
-    initRadius:0,
-    initRadiusMin:0,
-    initRadiusMax:1,
-    initRadiusStep:.01,
+    initRadius: 0,
+    initRadiusMin: 0,
+    initRadiusMax: 1,
+    initRadiusStep: .01,
     // spoke rotation
     // spokeRot:0,
     // spokeRotMin:-60,
     // spokeRotMax:60,
     // spokeRotStep:.1
     //bgColor: [0, 0, 0]
+    //style: ["black","white","tiny","tiny_white","tiny_black"]
   },
   ui_dr: {
     // vel
@@ -54,7 +54,7 @@ let glob = {
     internalStepsPwr: [0, 1, 2, 3, 4],
     //go: false,
     // major axis
-    particles: ['off','centers', 'chain', 'both'],
+    particles: ['off', 'centers', 'chain', 'both'],
     comTrail: false,
     spokes: false,
     newton: true,
@@ -64,28 +64,28 @@ let glob = {
     clrSeedMin: 0,
     clrSeedMax: 256,
     // highlight band
-    hiliteBand:0,
-    hiliteBandMin:0,
-    hiliteBandMax:1,
-    hiliteBandStep:.01,
+    hiliteBand: 0,
+    hiliteBandMin: 0,
+    hiliteBandMax: 1,
+    hiliteBandStep: .01,
     // evolute
     evolute: false,
-    apollonius:false,
-    shoot:false,
-    shootAngle:0,
-    shootAngleMin:-60,
-    shootAngleMax:60,
-    shootAngleStep:.1,
-    bounces:0,
-    bouncesMax:100,
-    bouncesMin:0
+    apollonius: false,
+    shoot: false,
+    shootAngle: 0,
+    shootAngleMin: -60,
+    shootAngleMax: 60,
+    shootAngleStep: .1,
+    bounces: 3,
+    bouncesMax: 100,
+    bouncesMin: 0
   },
   ui_caustics: {
-     3:false,
-     4:false,
-     5:false,
-     6:false,
-     "4si": false
+    3: false,
+    4: false,
+    5: false,
+    6: false,
+    "4si": false
   },
   sim: {
     // sim state should probably split
@@ -104,14 +104,13 @@ let glob = {
 
 function windowResized() {
   //[glob.width, glob.height] = get_window_width_height();
-  
+
   resizeCanvas(windowWidth, windowHeight);
-  glob.gui_dr.setPosition(windowWidth-glob.gui_width-20, 20);
+  glob.gui_dr.setPosition(windowWidth - glob.gui_width - 50, 20);
   glob.ctr = [windowWidth / 2, windowHeight / 2];
 }
 
 function gui_changed() {
-  set_btn(glob.goBtn, "Go", clr_blue, false);
   reset_sim(glob.ui, glob.sim);
   redraw();
 }
@@ -126,21 +125,22 @@ function gui_caustic_changed() {
   redraw();
 }
 
-function prepare_main_gui(width) {
-  const gui = createGui('Elliptic Echos');
+function prepare_sim_gui(width) {
+  const gui = createGui('Simulation');
   //gui.onchange = gui_changed;
   gui.addObject(glob.ui);
-  gui.setPosition(20, 60);
+  gui.setPosition(20, 180);
   gui.prototype.setWidth(width);
   gui.prototype.setGlobalChangeHandler(gui_changed);
+
   return gui;
 }
 
-function prepare_draw_gui(width) {
-  const gui = createGui('Draw Controls');
+function prepare_dr_gui(width) {
+  const gui = createGui('Draw');
   gui.addObject(glob.ui_dr);
   gui.prototype.setWidth(width);
-  gui.setPosition(windowWidth-width-20, 20);
+  gui.setPosition(windowWidth - width - 20, 20);
   // the 2nd argument is an index into the array.
   gui.prototype.setValue('speedPwr', 1);
   gui.prototype.setValue('internalStepsPwr', 2);
@@ -155,9 +155,50 @@ function prepare_caustic_gui(width) {
   const gui = createGui('Caustics');
   gui.addObject(glob.ui_caustics);
   gui.prototype.setWidth(width);
-  gui.setPosition(20, 380);
+  gui.setPosition(windowWidth-2*(width+20), 20);
   gui.prototype.setGlobalChangeHandler(gui_dr_changed);
   return gui;
+}
+
+function config_btn_pressed() {
+  const ui_obj = get_UI_state();
+  // async promise
+  glob.json_url.compress(ui_obj).then(output=>updateClipboard(glob.url+"?config="+output));
+}
+
+function reset_ui_btn_pressed() {
+  restoreSettings(glob.ui0);
+  reset_sim(glob.ui, glob.sim);
+  document.getElementById("Start").value = "Start";
+  redraw();
+  noLoop();
+}
+
+function start_btn_pressed(btn) {
+  if (btn.value=="Stop") {
+    btn.value="Start";
+    noLoop();
+  } else {
+    btn.value="Stop";
+    loop();
+  }
+}
+
+function reset_btn_pressed(btn) {
+  if (isLooping())
+    document.getElementById("Start").value = "Start";
+  reset_sim(glob.ui, glob.sim);
+  redraw();
+  noLoop();
+}
+
+function prepare_fc_gui(width) {
+  const gui_fc = QuickSettings.create(20, 20, "Start/Stop");
+  gui_fc.setWidth(width);
+  gui_fc.addButton("Start", start_btn_pressed);
+  gui_fc.addButton("Reset", reset_btn_pressed);
+  gui_fc.addButton("Copy Config", config_btn_pressed);
+  gui_fc.addButton("Reset UI", reset_ui_btn_pressed);                        // creates a button
 }
 
 function setup() {
@@ -167,15 +208,13 @@ function setup() {
   textStyle(NORMAL);
   strokeCap(SQUARE);
 
-  glob.goBtn = create_btn(20, 20, "Go", clr_blue, 50, goBtnPressed);
-  glob.resetBtn = create_btn(80, 20, "Reset", clr_purple, 50, resetBtnPressed);
-  glob.configBtn = create_btn(140,20, "Copy Config", clr_dark_orange, 80, configBtnPressed);
-  glob.resetUIBtn = create_btn(230, 20, "Reset UI", clr_pink, 70, resetUIBtnPressed);
+    QuickSettings.useExtStyleSheet();
 
-  glob.gui = prepare_main_gui(glob.gui_width);
-  glob.gui_dr = prepare_draw_gui(glob.gui_width);
+  glob.gui_fc = prepare_fc_gui(glob.gui_width);
+  glob.gui_sim = prepare_sim_gui(glob.gui_width);
+  glob.gui_dr = prepare_dr_gui(glob.gui_width);
   glob.gui_caustics = prepare_caustic_gui(glob.gui_width);
-
+ 
   glob.clrs = shuffle_seeded(clrs_crayola.map(c => c.rgb), glob.ui_dr.clrSeed);
 
   // only call draw when then gui is changed
@@ -186,8 +225,9 @@ function setup() {
   saveUI0(); // saves it as json for resetUIBtn
   // occurs after reset_sim to avoid race condition
   const params = getURLParams();
-  if (params.config!=null)
+  if (params.config != null)
     restoreSettings(params.config);
+  noLoop();
 }
 
 function keyPressed() {
@@ -200,25 +240,24 @@ function keyPressed() {
   }
 }
 
-function draw_btns() {
-  glob.goBtn.draw();
-  glob.resetBtn.draw();
-  glob.configBtn.draw();
-  glob.resetUIBtn.draw();
+function draw_titles() {
+  push();
+  textAlign(CENTER, BASELINE);
+  draw_text("~~Elliptic Echos~~", [.5 * windowWidth, .05 * windowHeight], clr_magenta, 24);
+  draw_text("© 2021 Dan S. Reznik", [.5 * windowWidth, .085 * windowHeight], clr_yellow, 16);
+  pop();
 }
 
 function draw() {
   background(glob.bgColor);
-  draw_btns();
-  if (glob.goBtn.state)
-    update_sim(glob.ui, glob.sim, glob.ui_dr, false);
+  draw_titles();
   push();
-  draw_text("© 2021 Dan S. Reznik", [.94 * windowWidth, .98 * windowHeight], clr_yellow, 16);
   translate(glob.ctr[0], glob.ctr[1]);
   scale(glob.scale * windowHeight / 2);
   draw_sim(glob.ui, glob.sim, glob.ui_dr);
   pop();
-  return (glob.goBtn.state);
+  if (isLooping())
+    update_sim(glob.ui, glob.sim, glob.ui_dr, false);
 }
 
 function mouseWheel(event) {
@@ -231,7 +270,7 @@ function mouseWheel(event) {
 }
 
 function mouse_in_ell() {
-  let p = vscale(vdiff([mouseX,mouseY], glob.ctr), 2 / (glob.scale * windowHeight));
+  let p = vscale(vdiff([mouseX, mouseY], glob.ctr), 2 / (glob.scale * windowHeight));
   return in_ell(glob.ui.a, 1, p);
 }
 

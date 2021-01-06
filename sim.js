@@ -263,7 +263,7 @@ function draw_sim(ui, sim, ui_dr) {
         // only draw sufficiently far away points
         const dmin = Math.pow(10., glob.ui_dr.speedPwr);
         const chain_filt = sim.particles.filter((p, i) => i == 0 ? true : magn(p, sim.particles[i - 1]) > dmin);
-        draw_polyline(chain_filt, clr_blue, .01);
+        draw_polyline(chain_filt, clr_cyan, .01);
     }
     if (ui.depart == "border")
         Object.values(glob.ui_caustics).map((v, i) => { if (v) draw_caustic_ps(sim.caustic_list[i]) });
