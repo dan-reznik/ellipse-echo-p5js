@@ -109,6 +109,8 @@ function windowResized() {
 }
 
 function gui_changed() {
+  if (isLooping())
+     noLoop();
   reset_sim(glob.ui, glob.sim);
   redraw();
 }
