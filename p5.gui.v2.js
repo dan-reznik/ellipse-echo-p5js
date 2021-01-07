@@ -12,32 +12,33 @@
 
   // default gui provider
   var guiProvider = 'QuickSettings';
-
+  
   const defaultLabel = 'p5.gui';
 
   // Create a GUI using QuickSettings (or DAT.GUI or ...)
   // You only need to pass a reference to the sketch in instance mode
 
   // Usually you will call createGui(this, 'label');
-  p5.prototype.createGui = function(sketch, label, provider) {
+  p5.prototype.createGui = function(label, global_cbk, provider) {
 
+    const sketch = window;
     // createGui(label) signature
-    if ((typeof sketch) === 'string') {
-      return this.createGui(label, sketch, provider);
-    }
+    //if ((typeof sketch) === 'string') {
+    //  return this.createGui(label, sketch, global_cbk, provider);
+    // }
 
     // normally the sketch will just be embedded below the body
     let parent = document.body;
 
-    if(sketch === undefined) {
+    //if(sketch === undefined) {
       // p5js global mode
-      sketch = window;
-      label = label || document.title || defaultLabel;
-    } else {
+    //  sketch = window;
+   //   label = label || document.title || defaultLabel;
+    //} else {
       // p5js instance mode
       parent = sketch.canvas.parentElement;
       label = label || parent.id || defaultLabel;
-    }
+    //}
 
     if(!('color' in sketch)) {
       console.error(`${parent.id}: You need to pass the p5 sketch to createGui in instance mode!`);
@@ -52,7 +53,7 @@
     if(provider === 'QuickSettings') {
       if(QuickSettings) {
         console.log('Creating p5.gui powered by QuickSettings.');
-        gui = new QSGui(label, parent, sketch);
+        gui = new QSGui(label, parent, sketch, global_cbk);
       } else {
         console.log('QuickSettings not found. Is the script included in your HTML?');
         gui = new DummyGui(label, parent, sketch);
@@ -101,7 +102,7 @@
 
 
   // interface for quicksettings
-  function QSGui(label, parent, sketch) {
+  function QSGui(label, parent, sketch, global_cbk) {
 
     // hard code the position, it can be changed later
     let x = 20;
@@ -138,7 +139,8 @@
 
     // noLoop() to call draw every time the gui changes when we are not looping
     this.noLoop = function() {
-      qs.setGlobalChangeHandler(sketch._draw);
+      //qs.setGlobalChangeHandler(sketch._draw);
+      qs.setGlobalChangeHandler(global_cbk);
     };
 
     this.loop = function() {

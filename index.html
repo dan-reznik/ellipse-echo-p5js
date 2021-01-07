@@ -3,10 +3,10 @@
   <head>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/quicksettings@latest/quicksettings.min.js"></script>
-    <script src="./p5.gui.js"></script>
-    <script src="./p5.clickable.js"></script>
+    <!-- made change to createGui so that in noLoop() mode calls a global cbk -->
+    <script src="./p5.gui.v2.js"></script>
     <script src="./json-url/json-url.js"></script>
-    <link id="qs_styles" rel="stylesheet" type="text/css" href="qs_tiny_black.css">
+   <link id="qs_styles" rel="stylesheet" type="text/css" href="qs_tiny_black.css">
     <!--<link rel="stylesheet" type="text/css" href="style.css">-->
     <meta charset="utf-8" />
   </head>
@@ -22,6 +22,7 @@
     <script src="caustics.js"></script>
     <script src="sim.js"></script>
     <script src="draw.js"></script>
+    <!-- <script src="sketch_debug.js"></script> -->
     <script src="sketch.js"></script>
   </body>
 </html>

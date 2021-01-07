@@ -34,7 +34,7 @@ let glob = {
     initRadius: 0,
     initRadiusMin: 0,
     initRadiusMax: 1,
-    initRadiusStep: .01,
+    initRadiusStep: .01
     // spoke rotation
     // spokeRot:0,
     // spokeRotMin:-60,
@@ -124,18 +124,17 @@ function gui_caustic_changed() {
 }
 
 function prepare_sim_gui(width) {
-  const gui = createGui('Simulation');
-  //gui.onchange = gui_changed;
+  const gui = createGui('Simulation', gui_changed);
   gui.addObject(glob.ui);
   gui.setPosition(20, 180);
   gui.prototype.setWidth(width);
-  gui.prototype.setGlobalChangeHandler(gui_changed);
+  // gui.prototype.setGlobalChangeHandler(gui_changed);
 
   return gui;
 }
 
 function prepare_dr_gui(width) {
-  const gui = createGui('Draw');
+  const gui = createGui('Draw', gui_dr_changed);
   gui.addObject(glob.ui_dr);
   gui.prototype.setWidth(width);
   gui.setPosition(windowWidth - width - 20, 20);
@@ -145,16 +144,16 @@ function prepare_dr_gui(width) {
   gui.prototype.setValue('particles', 2);
   gui.prototype.setValue('clrSeed', 114);
   // gui.prototype.setValue('caustics', 2);
-  gui.prototype.setGlobalChangeHandler(gui_dr_changed);
+  //gui.prototype.setGlobalChangeHandler(gui_dr_changed);
   return gui;
 }
 
 function prepare_caustic_gui(width) {
-  const gui = createGui('Caustics');
+  const gui = createGui('Caustics', gui_dr_changed);
   gui.addObject(glob.ui_caustics);
   gui.prototype.setWidth(width);
   gui.setPosition(windowWidth-2*(width+20), 20);
-  gui.prototype.setGlobalChangeHandler(gui_dr_changed);
+  //gui.prototype.setGlobalChangeHandler(gui_dr_changed);
   return gui;
 }
 
@@ -199,6 +198,8 @@ function prepare_fc_gui(width) {
   gui_fc.addButton("Reset UI", reset_ui_btn_pressed);                        // creates a button
 }
 
+// && when come back: need to think of a solution without noLoop()
+// debug -- go back to setup
 function setup() {
   //[glob.width, glob.height] = get_window_width_height();
   createCanvas(windowWidth, windowHeight);
@@ -206,17 +207,14 @@ function setup() {
   textStyle(NORMAL);
   strokeCap(SQUARE);
 
-    QuickSettings.useExtStyleSheet();
-
+  QuickSettings.useExtStyleSheet();
   glob.gui_fc = prepare_fc_gui(glob.gui_width);
   glob.gui_sim = prepare_sim_gui(glob.gui_width);
   glob.gui_dr = prepare_dr_gui(glob.gui_width);
   glob.gui_caustics = prepare_caustic_gui(glob.gui_width);
- 
+
   glob.clrs = shuffle_seeded(clrs_crayola.map(c => c.rgb), glob.ui_dr.clrSeed);
 
-  // only call draw when then gui is changed
-  //loop();
   glob.ctr = [windowWidth / 2, windowHeight / 2];
   glob.json_url = JsonUrl('lzma'); // JsonUrl is added to the window object
   reset_sim(glob.ui, glob.sim);

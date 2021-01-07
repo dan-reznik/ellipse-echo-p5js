@@ -9,8 +9,8 @@ function updateClipboard(newClip) {
 function get_UI_state() {
   const gui_sim_obj = glob.gui_sim.prototype.getValuesAsJSON();
   const gui_dr_obj = glob.gui_dr.prototype.getValuesAsJSON();
-  const gui_caustic_obj = glob.gui_caustics.prototype.getValuesAsJSON();
-  const both_obj = { gui_sim: gui_sim_obj, gui_dr: gui_dr_obj, gui_caustics: gui_caustic_obj, ctr: glob.ctr, scale: glob.scale };
+  const gui_caustics_obj = glob.gui_caustics.prototype.getValuesAsJSON();
+  const both_obj = { gui_sim: gui_sim_obj, gui_dr: gui_dr_obj, gui_caustics: gui_caustics_obj, ctr: glob.ctr, scale: glob.scale };
   return both_obj;
 }
 
