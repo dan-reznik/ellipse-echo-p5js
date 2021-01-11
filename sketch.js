@@ -54,8 +54,6 @@ let glob = {
     comTrail: false,
     spokes: false,
     newton: true,
-    //caustics: ["off", "3", "3,4", "3,4,5","3,4,5,6","3,4,4si"],
-    //bgColor: [0, 0, 0]
     clrSeed: 1,
     clrSeedMin: 0,
     clrSeedMax: 256,
@@ -76,12 +74,13 @@ let glob = {
     bouncesMax: 100,
     bouncesMin: 0
   },
-  ui_caustics: {
-    3: false,
-    4: false,
-    5: false,
-    6: false,
-    "4si": false
+  ui_caustics: { // needs space to retain order
+    "  3": false,
+    "  4": false,
+    "4si": false,
+    "  5": false,
+    "5si": false,
+    "  6": false
   },
   sim: {
     // sim state should probably split
@@ -154,7 +153,7 @@ function prepare_caustic_gui(width) {
   const gui = createGui('Caustics', gui_dr_changed);
   gui.addObject(glob.ui_caustics);
   gui.prototype.setWidth(width);
-  gui.setPosition(windowWidth-2*(width+20), 20);
+  gui.setPosition(windowWidth-2*(1.5*width+20), 20);
   //gui.prototype.setGlobalChangeHandler(gui_dr_changed);
   return gui;
 }
@@ -213,7 +212,7 @@ function setup() {
   glob.gui_fc = prepare_fc_gui(glob.gui_width);
   glob.gui_sim = prepare_sim_gui(glob.gui_width);
   glob.gui_dr = prepare_dr_gui(glob.gui_width);
-  glob.gui_caustics = prepare_caustic_gui(glob.gui_width);
+  glob.gui_caustics = prepare_caustic_gui(glob.gui_width/2);
 
   glob.clrs = shuffle_seeded(clrs_crayola.map(c => c.rgb), glob.ui_dr.clrSeed);
 

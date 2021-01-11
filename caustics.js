@@ -37,15 +37,16 @@ function hypInter_N4_si(a,b,app,bpp) {
 
 // TO DO: apollonius points
 
-function caustic_N5(a,b) 
-{
-   // c2 = app^2-bpp^2 => bpp^2=app^2-c2;
-   const app2 = caustic_N5_app2(a, b, a*a);
-   const c2 = a*a-b*b;
-   const app = Math.sqrt(app2);
-   const bpp = Math.sqrt(app2-c2);
-   return [app,bpp];
+function caustic_N5_low(a,b,x0) {
+    const app2 = caustic_N5_app2(a, b, x0);
+    const c2 = a*a-b*b;
+    const app = Math.sqrt(app2);
+    const bpp = Math.sqrt(app2-c2);
+    return [app,bpp]; 
 }
+
+const caustic_N5 = (a,b) => caustic_N5_low(a,b,a*a);
+const caustic_N5_si = (a,b) => caustic_N5_low(a,b,0);
 
 function caustic_N6(a,b) {
     const denom=a+b;

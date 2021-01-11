@@ -73,11 +73,12 @@ function max_index(vals) {
 }
 
 const dict_caustic_data = {
-    3: { fn: caustic_N3, clr: 0, hyp: false, n: 3 },
-    4: { fn: caustic_N4, clr: 1, hyp: false, n: 4 },
-    5: { fn: caustic_N5, clr: 2, hyp: false, n: 5 },
-    6: { fn: caustic_N6, clr: 3, hyp: false, n: 6 },
-    '4si': { fn: caustic_N4_si, clr: 4, hyp: true, n: 4, hypInterFn: hypInter_N4_si }
+    "  3": { id: 0, fn: caustic_N3, hyp: false, n: 3 },
+    "  4": { id: 1, fn: caustic_N4, hyp: false, n: 4 },
+    "4si": { id: 2, fn: caustic_N4_si, hyp: true, n: 4, hypInterFn: hypInter_N4_si },
+    "  5": { id: 3, fn: caustic_N5, hyp: false, n: 5 },
+    "5si": { id: 4, fn: caustic_N5_si, hyp: false, n: 5 },
+    "  6": { id: 5, fn: caustic_N6, hyp: false, n: 6 }
 };
 
 function get_caustic_data(ui, sim, key) {
@@ -100,7 +101,7 @@ function get_caustic_data(ui, sim, key) {
         key: key,
         app: app, bpp: bpp,
         orbit: orbit, vs: vs, ps: [sim.P0, sim.P0],
-        clr_index: entry.clr,
+        clr_index: entry.id,
         tangFn: tangFn,
         hypBranch1: hyp_points.map(p => p[0]),
         hypBranch2: hyp_points.map(p => p[1])
