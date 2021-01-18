@@ -35,11 +35,6 @@ function caustic_N4_si(a, b) {
     }
 }
 
-function hypInter_N4_si(a, b, app, bpp) {
-    const c = Math.sqrt(a * a - b * b);
-    return [(a / c) * app, (b / c) * bpp];
-}
-
 // a/b>2
 function caustic_N6_si_I(a, b) {
     if (a < 2 * b) {
@@ -50,14 +45,6 @@ function caustic_N6_si_I(a, b) {
         const bpp = (Math.pow(b, 1.5) * Math.sqrt(2 * a - b)) / (a - b);
         return [app, bpp];
     }
-}
-
-
-function hypInter_N6_si_I(a, b, app, bpp) {
-    const c = Math.sqrt(a * a - b * b);
-    const xint = (a / c) * app;
-    const yint = (b / c) * bpp;
-    return [(a / c) * app, (b / c) * bpp];
 }
 
 // a/b>2sqrt(3)/3
@@ -74,9 +61,9 @@ function caustic_N6_si_II(a, b) {
     }
 }
 
-function hypInter_N6_si_II(a, b, app, bpp) {
+function hyp_inter_confocal(a,b,app,bpp) {
     const c = Math.sqrt(a * a - b * b);
-    return [(app / c), (bpp / c)];
+    return [(a / c) * app, (b / c) * bpp];
 }
 
 

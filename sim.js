@@ -75,19 +75,19 @@ function max_index(vals) {
 const dict_caustic_data = {
     "     3": { id: 0, fn: caustic_N3, hyp: false, n: 3 },
     "     4": { id: 1, fn: caustic_N4, hyp: false, n: 4 },
-    "   4si": { id: 2, fn: caustic_N4_si, hyp: true, n: 4, hypInterFn: hypInter_N4_si, ab_min: Math.sqrt(2) },
+    "   4si": { id: 2, fn: caustic_N4_si, hyp: true, n: 4, ab_min: Math.sqrt(2) },
     "     5": { id: 3, fn: caustic_N5, hyp: false, n: 5 },
     "   5si": { id: 4, fn: caustic_N5_si, hyp: false, n: 5 },
     "     6": { id: 5, fn: caustic_N6, hyp: false, n: 6 },
-    " 6si-I": { id: 6, fn: caustic_N6_si_I, hyp: true, n: 6, hypInterFn: hypInter_N6_si_I, ab_min: 2 },
-    "6si-II": { id: 7, fn: caustic_N6_si_II, hyp: true, n: 6, hypInterFn: hypInter_N6_si_II, ab_min: (2 / 3) * Math.sqrt(3) }
+    " 6si-I": { id: 6, fn: caustic_N6_si_I, hyp: true, n: 6, ab_min: 2 },
+    "6si-II": { id: 7, fn: caustic_N6_si_II, hyp: true, n: 6, ab_min: (2 / 3) * Math.sqrt(3) }
 };
 
 function get_caustic_data(ui, sim, key) {
     let obj = null;
     const entry = dict_caustic_data[key];
     const [app, bpp] = entry.fn(ui.a, 1);
-    const hypInter = entry.hyp ? entry.hypInterFn(ui.a, 1, app, bpp) : [0, 0];
+    const hypInter = entry.hyp ? hyp_inter_confocal(ui.a, 1, app, bpp) : [0, 0];
     const hyp_points = entry.hyp ? range(-60, 60).map(d => hyperbola_points(app, bpp, toRad(d))) : [[0, 0], [0, 0]];
     // if hyperbola, P0 must lie between intersections
     const validHyp = entry.hyp && ui.a > entry.ab_min;
