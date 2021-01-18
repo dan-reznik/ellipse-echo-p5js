@@ -83,7 +83,7 @@ function ellTangentsb(a, b, [px, py]) {
 
 function hypTangentsb(a, b, [px, py]) {
     const a2 = a * a, b2 = b * b;
-    const px2 = px * px; py2 = py * py;
+    const px2 = px * px, py2 = py * py;
     //const px3 = px*px2;
     const py3 = py * py2;
     const denomx = b2 * px2 - a2 * py2;

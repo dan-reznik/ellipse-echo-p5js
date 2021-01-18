@@ -96,7 +96,10 @@ function get_caustic_data(ui, sim, key) {
     const tangs = validP0 ? tangFn(app, bpp, sim.P0) : [[0, 0], [0, 0]];
     // was bounce caustic but bad for hyperbolas
     const vs = validP0 ? tangs.map(p => vnorm(vdiff(p, sim.P0))) : [[0, 0], [0, 0]];
-    const orbit = validP0 ? bounce_billiard(ui.a, 1, sim.P0, vs[0], entry.n) : [sim.P0];
+    // bounce_billiard é sensivel a erros the instabilidade numerica
+    const orbit = validP0 ? bounce_billiard(ui.a, 1, sim.P0,
+        // avoid numerical instability by selecting the tangent closest to the center 
+        magn2(tangs[0])<magn2(tangs[1])? vs[0]:vs[1], entry.n) : [sim.P0];
 
     obj = {
         hyp: entry.hyp,
