@@ -73,12 +73,14 @@ function max_index(vals) {
 }
 
 const dict_caustic_data = {
-    "  3": { id: 0, fn: caustic_N3, hyp: false, n: 3 },
-    "  4": { id: 1, fn: caustic_N4, hyp: false, n: 4 },
-    "4si": { id: 2, fn: caustic_N4_si, hyp: true, n: 4, hypInterFn: hypInter_N4_si },
-    "  5": { id: 3, fn: caustic_N5, hyp: false, n: 5 },
-    "5si": { id: 4, fn: caustic_N5_si, hyp: false, n: 5 },
-    "  6": { id: 5, fn: caustic_N6, hyp: false, n: 6 }
+    "     3": { id: 0, fn: caustic_N3, hyp: false, n: 3 },
+    "     4": { id: 1, fn: caustic_N4, hyp: false, n: 4 },
+    "   4si": { id: 2, fn: caustic_N4_si, hyp: true, n: 4, hypInterFn: hypInter_N4_si, ab_min: Math.sqrt(2) },
+    "     5": { id: 3, fn: caustic_N5, hyp: false, n: 5 },
+    "   5si": { id: 4, fn: caustic_N5_si, hyp: false, n: 5 },
+    "     6": { id: 5, fn: caustic_N6, hyp: false, n: 6 },
+    " 6si-I": { id: 6, fn: caustic_N6_si_I, hyp: true, n: 6, hypInterFn: hypInter_N6_si_I, ab_min: 2 },
+    "6si-II": { id: 7, fn: caustic_N6_si_II, hyp: true, n: 6, hypInterFn: hypInter_N6_si_II, ab_min: (2 / 3) * Math.sqrt(3) }
 };
 
 function get_caustic_data(ui, sim, key) {
@@ -88,7 +90,8 @@ function get_caustic_data(ui, sim, key) {
     const hypInter = entry.hyp ? entry.hypInterFn(ui.a, 1, app, bpp) : [0, 0];
     const hyp_points = entry.hyp ? range(-60, 60).map(d => hyperbola_points(app, bpp, toRad(d))) : [[0, 0], [0, 0]];
     // if hyperbola, P0 must lie between intersections
-    const validP0 = entry.hyp ? Math.abs(sim.P0[0]) < hypInter[0] : true;
+    const validHyp = entry.hyp && ui.a > entry.ab_min;
+    const validP0 = entry.hyp ? validHyp && (Math.abs(sim.P0[0]) < hypInter[0]) : true;
     const tangFn = entry.hyp ? hypTangentsb : ellTangentsb;
     const tangs = validP0 ? tangFn(app, bpp, sim.P0) : [[0, 0], [0, 0]];
     // was bounce caustic but bad for hyperbolas
@@ -98,11 +101,13 @@ function get_caustic_data(ui, sim, key) {
     obj = {
         hyp: entry.hyp,
         validP0: validP0,
+        validHyp: validHyp,
         key: key,
         app: app, bpp: bpp,
         orbit: orbit, vs: vs, ps: [sim.P0, sim.P0],
         clr_index: entry.id,
         tangFn: tangFn,
+        hypInter: hypInter,
         hypBranch1: hyp_points.map(p => p[0]),
         hypBranch2: hyp_points.map(p => p[1])
     };
@@ -186,17 +191,17 @@ function update_apollonius_once(ui, sim, speed, newton) {
     let new_particles = sim.apollonius_list.map(app => vsum(app.curr, vscale(app.vel, speed)));
     const crossed = new_particles.map(z => outside_ell(ui.a, 1.0, z));
     const new_point_vels = sim.apollonius_list.map((app, i) => crossed[i] ? get_refl_vel(ui.a, new_particles[i], app.vel, speed, newton) : { p: new_particles[i], v: app.vel });
-    sim.apollonius_list.map((app,i)=>{app.curr = new_point_vels[i].p; app.vel = new_point_vels[i].v;});
+    sim.apollonius_list.map((app, i) => { app.curr = new_point_vels[i].p; app.vel = new_point_vels[i].v; });
 }
 
 
-function get_shoot(ui,sim,ui_dr) {
+function get_shoot(ui, sim, ui_dr) {
     const t = toRad(ui_dr.shootAngle);
     const ct = Math.cos(t), st = Math.sin(t);
-    const nhat = ell_norm(ui.a,1,sim.P0);
-    const nhat_rot = vrot(nhat,ct,st);
+    const nhat = ell_norm(ui.a, 1, sim.P0);
+    const nhat_rot = vrot(nhat, ct, st);
     const ps = bounce_billiard(ui.a, 1, sim.P0, nhat_rot, ui_dr.bounces);
-    return { nhat:nhat_rot, ps:ps };
+    return { nhat: nhat_rot, ps: ps };
 
 }
 
@@ -208,31 +213,35 @@ function update_sim(ui, sim, ui_dr, bwd = false) {
         update_sim_once(ui, sim, speed_fb, ui_dr.newton)
         sim.caustic_list.map(c => c != null ? update_caustic_once(ui, c, speed_fb, ui_dr.newton) : null);
         if (sim.apollonius_list.length > 0)
-           update_apollonius_once(ui, sim, speed_fb, newton)
+            update_apollonius_once(ui, sim, speed_fb, newton)
     }
 }
 
 function draw_caustic_shapes(caustic) {
     const clr = glob.clrs[caustic.clr_index];
     if (caustic.hyp) {
-        draw_polyline(caustic.hypBranch1, clr_brown, .01);
-        draw_polyline(caustic.hypBranch2, clr_brown, .01);
+        if (caustic.validHyp) {
+            draw_polyline(caustic.hypBranch1, clr_brown, .01);
+            draw_polyline(caustic.hypBranch2, clr_brown, .01);
+            draw_point(caustic.hypInter, clr_brown, .01);
+        }
     } else
         draw_ellipse_low(caustic.app, caustic.bpp, clr_brown, .01);
     if (caustic.validP0)
         draw_polygon(caustic.orbit, clr, .01);
+
 }
 
 function draw_caustic_ps(caustic) {
     caustic.ps.map(p => draw_point(p, glob.clrs[caustic.clr_index], .005));
 }
 
-function draw_boundary_arrow(a,p,nhat,clr) {
-    draw_arrow(p, vsum(p,vscale(nhat,.2)), clr, .01);
+function draw_boundary_arrow(a, p, nhat, clr) {
+    draw_arrow(p, vsum(p, vscale(nhat, .2)), clr, .01);
 }
 
-function draw_ell_normal(a,p) {
-    draw_arrow(p, vsum(p,vscale(ell_norm(a,1,p),.2)), clr_white, .01);
+function draw_ell_normal(a, p) {
+    draw_arrow(p, vsum(p, vscale(ell_norm(a, 1, p), .2)), clr_white, .01);
 }
 
 function draw_sim(ui, sim, ui_dr) {
@@ -245,7 +254,7 @@ function draw_sim(ui, sim, ui_dr) {
         sim.apollonius_list.map(app => {
             draw_point(app.boundary, clr_white, .005);
             draw_line_dashed(sim.P0, app.boundary, clr_white, .01);
-            draw_ell_normal(ui.a,app.boundary);
+            draw_ell_normal(ui.a, app.boundary);
         });
     }
     if (ui.depart == "border")
@@ -270,16 +279,16 @@ function draw_sim(ui, sim, ui_dr) {
         Object.values(glob.ui_caustics).map((v, i) => { if (v) draw_caustic_ps(sim.caustic_list[i]) });
     if (ui_dr.hiliteBand > 0)
         draw_polyline(sim.particles.slice(0, (sim.particles.length * ui_dr.hiliteBand) - 1), clr_cyan, .01);
-        if (ui_dr.apollonius && sim.apollonius_list.length > 0) {
-            sim.apollonius_list.map(app => draw_point(app.curr, clr_white, .005));
-        }
-    
-    if (ui_dr.shoot) {
-        const shoot = get_shoot(ui,sim,ui_dr);
-        draw_polyline(shoot.ps, clr_red, .01);
-        draw_boundary_arrow(ui.a,sim.P0,shoot.nhat,clr_red);
+    if (ui_dr.apollonius && sim.apollonius_list.length > 0) {
+        sim.apollonius_list.map(app => draw_point(app.curr, clr_white, .005));
     }
 
-    draw_ell_normal(ui.a,sim.P0);
+    if (ui_dr.shoot) {
+        const shoot = get_shoot(ui, sim, ui_dr);
+        draw_polyline(shoot.ps, clr_red, .01);
+        draw_boundary_arrow(ui.a, sim.P0, shoot.nhat, clr_red);
+    }
+
+    draw_ell_normal(ui.a, sim.P0);
     draw_point(sim.P0, clr_red, .01);
 }
