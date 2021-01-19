@@ -66,12 +66,11 @@ function hyp_inter_confocal(a,b,app,bpp) {
     return [(a / c) * app, (b / c) * bpp];
 }
 
-
 // TO DO: apollonius points
 
 function caustic_N5_low(a, b, x0) {
-    const app2 = caustic_N5_app2(a, b, x0);
     const c2 = a * a - b * b;
+    const app2 = caustic_N5_app2(a, b, x0);
     const app = Math.sqrt(app2);
     const bpp = Math.sqrt(app2 - c2);
     return [app, bpp];
@@ -86,6 +85,18 @@ function caustic_N6(a, b) {
     const bp = b * Math.sqrt(b * (2 * a + b)) / denom;
     return [ap, bp];
 }
+
+function caustic_N7_low(a, b, x0) {
+    const c2 = a * a - b * b;
+    const app = caustic_N7_app(a, b, x0);
+    const bpp = Math.sqrt(app*app - c2);
+    return [Math.abs(app), bpp];
+}
+
+// first two are negative roots, last is positive
+const caustic_N7 = (a, b) => caustic_N7_low(a, b, -a);
+const caustic_N7_si_I = (a, b) => caustic_N7_low(a, b, -Math.sqrt(a*a-b*b)); // -c as guess for app
+const caustic_N7_si_II = (a, b) => caustic_N7_low(a, b, .5*(a+Math.sqrt(a*a-b*b))); // (a+c)/2 as guess for app
 
 function bounce_caustic(a, b, P0, app, bpp, n, tangFn) {
     let tangs, nextP = P0, ps = [JSON.parse(JSON.stringify(P0))];

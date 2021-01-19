@@ -80,7 +80,10 @@ const dict_caustic_data = {
     "   5si": { id: 4, fn: caustic_N5_si, hyp: false, n: 5 },
     "     6": { id: 5, fn: caustic_N6, hyp: false, n: 6 },
     " 6si-I": { id: 6, fn: caustic_N6_si_I, hyp: true, n: 6, ab_min: 2 },
-    "6si-II": { id: 7, fn: caustic_N6_si_II, hyp: true, n: 6, ab_min: (2 / 3) * Math.sqrt(3) }
+    "6si-II": { id: 7, fn: caustic_N6_si_II, hyp: true, n: 6, ab_min: (2 / 3) * Math.sqrt(3) },
+    "     7": { id: 8, fn: caustic_N7, hyp: false, n: 7 },
+    " 7si-I": { id: 9, fn: caustic_N7_si_I, hyp: false, n: 7 },
+    "7si-II": { id: 10, fn: caustic_N7_si_II, hyp: false, n: 7 }
 };
 
 function get_caustic_data(ui, sim, key) {

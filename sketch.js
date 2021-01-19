@@ -18,18 +18,19 @@ let glob = {
     aMin: 1,
     aMax: 4,
     aStep: 0.001,
+    // tDeg
+    tDeg: 45.,
+    tDegMin: -360,
+    tDegMax: 360,
+    tDegStep: 0.1,
+    depart: ['border', 'center', 'focus', 'top vtx', 'bottom vtx', 'left vtx', 'right vtx', "mid minor", "mid major"],
     // dirs
 
     dirs: 1800,
     dirsMin: 1,
     dirsMax: 3600,
     dirsStep: 1,
-    depart: ['border', 'center', 'focus', 'top vtx', 'bottom vtx', 'left vtx', 'right vtx', "mid minor", "mid major"],
-    // tDeg
-    tDeg: 45.,
-    tDegMin: -360,
-    tDegMax: 360,
-    tDegStep: 0.1,
+        
     // init radius
     initRadius: 0,
     initRadiusMin: 0,
@@ -82,7 +83,10 @@ let glob = {
     "   5si": false,
     "     6": false,
     " 6si-I": false,
-    "6si-II": false
+    "6si-II": false,
+    "     7": false,
+    " 7si-I": false,
+    "7si-II": false
   },
   sim: {
     // sim state should probably split
