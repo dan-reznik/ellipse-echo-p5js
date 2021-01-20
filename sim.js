@@ -73,17 +73,20 @@ function max_index(vals) {
 }
 
 const dict_caustic_data = {
-    "     3": { id: 0, fn: caustic_N3, hyp: false, n: 3 },
-    "     4": { id: 1, fn: caustic_N4, hyp: false, n: 4 },
-    "   4si": { id: 2, fn: caustic_N4_si, hyp: true, n: 4, ab_min: Math.sqrt(2) },
-    "     5": { id: 3, fn: caustic_N5, hyp: false, n: 5 },
-    "   5si": { id: 4, fn: caustic_N5_si, hyp: false, n: 5 },
-    "     6": { id: 5, fn: caustic_N6, hyp: false, n: 6 },
-    " 6si-I": { id: 6, fn: caustic_N6_si_I, hyp: true, n: 6, ab_min: 2 },
-    "6si-II": { id: 7, fn: caustic_N6_si_II, hyp: true, n: 6, ab_min: (2 / 3) * Math.sqrt(3) },
-    "     7": { id: 8, fn: caustic_N7, hyp: false, n: 7 },
-    " 7si-I": { id: 9, fn: caustic_N7_si_I, hyp: false, n: 7 },
-    "7si-II": { id: 10, fn: caustic_N7_si_II, hyp: false, n: 7 }
+    "      3": { id: 0, fn: caustic_N3, hyp: false, n: 3 },
+    "      4": { id: 1, fn: caustic_N4, hyp: false, n: 4 },
+    "    4si": { id: 2, fn: caustic_N4_si, hyp: true, n: 4, ab_min: Math.sqrt(2) },
+    "      5": { id: 3, fn: caustic_N5, hyp: false, n: 5 },
+    "    5si": { id: 4, fn: caustic_N5_si, hyp: false, n: 5 },
+    "      6": { id: 5, fn: caustic_N6, hyp: false, n: 6 },
+    "  6si-I": { id: 6, fn: caustic_N6_si_I, hyp: true, n: 6, ab_min: 2 },
+    " 6si-II": { id: 7, fn: caustic_N6_si_II, hyp: true, n: 6, ab_min: (2 / 3) * Math.sqrt(3) },
+    "      7": { id: 8, fn: caustic_N7, hyp: false, n: 7 },
+    "  7si-I": { id: 9, fn: caustic_N7_si_I, hyp: false, n: 7 },
+    " 7si-II": { id: 10, fn: caustic_N7_si_II, hyp: false, n: 7 },
+    "      8": { id: 11, fn: caustic_N8, hyp: false, n: 8 },
+    "8si-III": { id: 12, fn: caustic_N8_si_III, hyp: false, n: 8 }
+    //"  8si-I": { id: 12, fn: caustic_N8_si_I, hyp: true, n: 8, ab_min: 1 }
 };
 
 function get_caustic_data(ui, sim, key) {

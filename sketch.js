@@ -76,17 +76,21 @@ let glob = {
     bouncesMin: 0
   },
   ui_caustics: { // needs space to retain order
-    "     3": false,
-    "     4": false,
-    "   4si": false,
-    "     5": false,
-    "   5si": false,
-    "     6": false,
-    " 6si-I": false,
-    "6si-II": false,
-    "     7": false,
-    " 7si-I": false,
-    "7si-II": false
+    "      3": false,
+    "      4": false,
+    "    4si": false,
+    "      5": false,
+    "    5si": false,
+    "      6": false,
+    "  6si-I": false,
+    " 6si-II": false,
+    "      7": false,
+    "  7si-I": false,
+    " 7si-II": false,
+    "      8": false,
+    //"  8si-I": false,
+    //" 8si-II": false,
+    "8si-III": false
   },
   sim: {
     // sim state should probably split

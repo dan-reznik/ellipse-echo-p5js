@@ -93,10 +93,31 @@ function caustic_N7_low(a, b, x0) {
     return [Math.abs(app), bpp];
 }
 
+
+function caustic_N8_si_I_II_low(a,b,x0) {
+    const a2=a*a,b2=b*b;
+    const c2=a2-b2;
+    const x1_sqr = newton_optim(a, b, x0, caustic_N8_I_II_ks, 4);
+    const app2 = (x1_sqr*c2)/b2;
+    const bpp2=c2-app2<0?0:c2-app2;
+    return [app2,bpp2].map(Math.sqrt);
+}
+
+function caustic_N8_si_III_low(a, b, x0) {
+    const c2 = a * a - b * b;
+    const app2 = newton_optim(a, b, x0, caustic_N8_III_ks, 4);
+    const bpp2 = app2 - c2;
+    return [app2, bpp2].map(Math.sqrt);
+}
+
+
 // first two are negative roots, last is positive
 const caustic_N7 = (a, b) => caustic_N7_low(a, b, -a);
 const caustic_N7_si_I = (a, b) => caustic_N7_low(a, b, -Math.sqrt(a*a-b*b)); // -c as guess for app
 const caustic_N7_si_II = (a, b) => caustic_N7_low(a, b, .5*(a+Math.sqrt(a*a-b*b))); // (a+c)/2 as guess for app
+const caustic_N8 = (a, b) => caustic_N8_low(a, b, .5);
+const caustic_N8_si_I = (a, b) => caustic_N8_si_I_II_low(a, b, a);
+const caustic_N8_si_III = (a, b) => caustic_N8_si_III_low(a, b, 0);
 
 function bounce_caustic(a, b, P0, app, bpp, n, tangFn) {
     let tangs, nextP = P0, ps = [JSON.parse(JSON.stringify(P0))];
