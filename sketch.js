@@ -252,8 +252,8 @@ function draw_titles() {
   draw_text("~~Elliptic Echos~~", [.5 * windowWidth, 30], clr_magenta, 24);
   //draw_text("© 2021 Dan S. Reznik -- bit.ly/3qCgVJG", [.5 * windowWidth,55], clr_yellow, 16);
   draw_text("© 2021 Dan S. Reznik", [.5 * windowWidth,55], clr_yellow, 16);
-  textAlign(RIGHT, BASELINE);
-  draw_text("github.com/dan-reznik/ellipse-echo-p5js", [windowWidth-20, windowHeight-20], clr_yellow, 16);
+  textAlign(LEFT, BASELINE);
+  draw_text("github.com/dan-reznik/ellipse-echo-p5js", [20, windowHeight-20], clr_yellow, 16);
   pop();
 }
 

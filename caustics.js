@@ -117,6 +117,7 @@ const caustic_N7_si_I = (a, b) => caustic_N7_low(a, b, -Math.sqrt(a*a-b*b)); // 
 const caustic_N7_si_II = (a, b) => caustic_N7_low(a, b, .5*(a+Math.sqrt(a*a-b*b))); // (a+c)/2 as guess for app
 const caustic_N8 = (a, b) => caustic_N8_low(a, b, .5);
 const caustic_N8_si_I = (a, b) => caustic_N8_si_I_II_low(a, b, a);
+const caustic_N8_si_II = (a, b) => caustic_N8_si_I_II_low(a, b, (a*a)/2);
 const caustic_N8_si_III = (a, b) => caustic_N8_si_III_low(a, b, 0);
 
 function bounce_caustic(a, b, P0, app, bpp, n, tangFn) {
