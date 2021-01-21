@@ -175,10 +175,8 @@ function config_btn_pressed() {
 }
 
 function reset_ui_btn_pressed() {
-  restoreSettings(glob.ui0);
-  reset_sim(glob.ui, glob.sim);
   document.getElementById("Start").value = "Start";
-  redraw();
+  restoreSettings(glob.ui0);
   noLoop();
 }
 

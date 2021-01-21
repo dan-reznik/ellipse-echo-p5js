@@ -28,5 +28,8 @@ function restoreSettings(str) {
     glob.ctr = json.ctr;
     glob.ctr = [windowWidth/2,windowHeight/2];
     glob.scale = json.scale;
+    // needs to be here as this is asynchronous
+    reset_sim(glob.ui, glob.sim);
+    redraw();
   });
 }
