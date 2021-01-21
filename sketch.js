@@ -215,6 +215,7 @@ function setup() {
   textAlign(CENTER, BOTTOM);
   textStyle(NORMAL);
   strokeCap(SQUARE);
+  strokeJoin(ROUND);
 
   QuickSettings.useExtStyleSheet();
   glob.gui_fc = prepare_fc_gui(glob.gui_width);
@@ -248,10 +249,23 @@ function keyPressed() {
 function draw_titles() {
   push();
   textAlign(CENTER, BASELINE);
-  draw_text("~~Elliptic Echos~~", [.5 * windowWidth, .05 * windowHeight], clr_magenta, 24);
-  draw_text("© 2021 Dan S. Reznik", [.5 * windowWidth, .085 * windowHeight], clr_yellow, 16);
+  draw_text("~~Elliptic Echos~~", [.5 * windowWidth, 30], clr_magenta, 24);
+  //draw_text("© 2021 Dan S. Reznik -- bit.ly/3qCgVJG", [.5 * windowWidth,55], clr_yellow, 16);
+  draw_text("© 2021 Dan S. Reznik", [.5 * windowWidth,55], clr_yellow, 16);
+  textAlign(RIGHT, BASELINE);
+  draw_text("github.com/dan-reznik/ellipse-echo-p5js", [windowWidth-20, windowHeight-20], clr_yellow, 16);
   pop();
 }
+
+function draw_titles_old() {
+  push();
+  textAlign(LEFT, BASELINE);
+  draw_text("~~~Elliptic Echos~~~", [30, 30], clr_magenta, 24);
+  draw_text("© 2021 Dan S. Reznik", [30, 55], clr_yellow, 16);
+  draw_text("https://bit.ly/3qCgVJG", [30, 75], clr_yellow, 16);
+  pop();
+}
+
 
 function draw() {
   background(glob.bgColor);
