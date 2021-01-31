@@ -97,6 +97,7 @@ function caustic_N7_low(a, b, x0) {
 function caustic_N8_si_I_II_low(a,b,x0) {
     const a2=a*a,b2=b*b;
     const c2=a2-b2;
+    // check: x^2 is the intersection of hyp caustic w ellipse
     const x1_sqr = newton_optim(a, b, x0, caustic_N8_I_II_ks, 4);
     const app2 = (x1_sqr*c2)/b2;
     const bpp2=c2-app2<0?0:c2-app2;
